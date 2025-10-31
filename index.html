@@ -56,7 +56,22 @@
           <button class="upgrade-btn" id="marketingBtn">Marketing Material (<span id="marketingLevel">0</span>/10) - <span id="marketingCost">500</span> coffees</button><br />
           <button class="upgrade-btn" id="buyUpgradeBtn">Upgrade Coffee Machine (<span id="upgradeCost">100</span>)</button><br />
         </div>
-
+         <!-- Prestige shop buttons -->
+          <h3 style="margin-top: 20px;">Prestige Shop - Spend Cafe Points</h3>
+        
+          <button class="upgrade-btn" id="buyProdBoostBtn">Buy +1% Production Boost (Cost: <span id="prodBoostCost">1</span> CP)</button><br />
+          <button class="upgrade-btn" id="buyCostReduceBtn">Buy -2% Cost Reduction (Cost: <span id="costReduceCost">1</span> CP)</button><br />
+          <button class="upgrade-btn" id="buyAutomationUnlockBtn">Buy Automation Unlock (Cost: <span id="automationUnlockCost">3</span> CP)</button><br />
+        
+          <div id="automation-toggles" style="margin-top:10px; display:none;">
+            <h4>Automation Settings</h4>
+            <label><input type="checkbox" id="autoBarista" /> Auto buy Baristas</label><br />
+            <label><input type="checkbox" id="autoTruck" /> Auto buy Trucks</label><br />
+            <label><input type="checkbox" id="autoEspresso" /> Auto buy Espresso Machines</label><br />
+            <label><input type="checkbox" id="autoPourOver" /> Auto buy Pour Over</label><br />
+            <label><input type="checkbox" id="autoFilter" /> Auto buy Filter</label><br />
+            <label><input type="checkbox" id="autoColdBrew" /> Auto buy Cold Brew</label>
+          </div>
         <div class="boost-marketing-container">
           <button class="upgrade-btn" id="boostBtn">Activate Coffee Rush (Ready)</button>
           <div id="boostTimer" style="margin-top:5px; color: var(--yellow); font-weight:600;">Cooldown: 00:00</div>
