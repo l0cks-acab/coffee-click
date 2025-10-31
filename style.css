@@ -1,5 +1,4 @@
 :root {
-  /* Catppuccin Mocha colors */
   --rosewater: #f5e0dc;
   --flamingo: #f2cdcd;
   --pink: #f5c2e7;
@@ -27,6 +26,7 @@
   --mantle: #181825;
   --crust: #11111b;
 }
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--base);
@@ -36,6 +36,7 @@ body {
   padding: 30px;
   box-sizing: border-box;
 }
+
 #overall-container {
   display: flex;
   gap: 30px;
@@ -44,7 +45,6 @@ body {
   box-sizing: border-box;
 }
 
-/* Left info panel */
 #info-panel {
   background-color: var(--mantle);
   color: var(--text);
@@ -52,37 +52,44 @@ body {
   padding: 20px;
   border-radius: 16px;
   font-size: 0.9rem;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
-#info-panel h2, #info-panel h3 { color: var(--pink); font-weight: 700; margin-bottom: 10px; }
-#info-panel ul { list-style: disc; margin-left:1.25em; margin-bottom: 20px; }
 
-/* Main container */
+#info-panel h2,
+#info-panel h3 {
+  color: var(--pink);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+#info-panel ul {
+  list-style: disc;
+  margin-left: 1.25em;
+  margin-bottom: 20px;
+}
+
 #main-container {
   flex: 1;
   display: flex;
   gap: 30px;
 }
 
-/* Game container */
 #game-container {
   background-color: var(--surface0);
   border-radius: 16px;
   padding: 30px 40px;
   width: 100%;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Shop upgrades */
 .shop-container {
-  width: 100%;
   margin-top: 20px;
+  width: 100%;
 }
 
-/* Boost + Marketing container */
 .boost-marketing-container {
   margin-top: 15px;
   width: 100%;
@@ -91,17 +98,37 @@ body {
   gap: 8px;
 }
 
-/* Prestige Container */
 .prestige-container {
   margin-top: 20px;
   width: 100%;
   background-color: var(--surface1);
   border-radius: 12px;
   padding: 12px 16px;
-  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
 }
 
-/* Right side panel */
+#achievementsToggle {
+  background-color: var(--surface1);
+  border: none;
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  text-align: left;
+  margin-top: 12px;
+}
+
+#achievementsToggle:hover {
+  background-color: var(--lavender);
+  color: var(--crust);
+}
+
+#achievements-container.collapsed {
+  display: none;
+}
+
 #right-panel {
   width: 280px;
   display: flex;
@@ -109,31 +136,15 @@ body {
   gap: 20px;
 }
 
-/* Brewing container */
-#brewing-container {
-  background-color: var(--surface1);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-
-/* Achievements container */
-#achievements-container {
-  background-color: var(--surface1);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-}
-
-/* Save/Load container */
+#brewing-container,
+#achievements-container,
 #save-load-container {
   background-color: var(--surface1);
   border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* Buttons */
 button.upgrade-btn {
   padding: 10px;
   width: 100%;
@@ -149,7 +160,7 @@ button.upgrade-btn {
 button.upgrade-btn:hover:enabled {
   background-color: var(--lavender);
   color: var(--crust);
-  box-shadow: 0 3px 12px rgba(127,132,156,0.5);
+  box-shadow: 0 3px 12px rgba(127, 132, 156, 0.5);
 }
 
 button.upgrade-btn:disabled {
@@ -174,24 +185,22 @@ button.upgrade-btn:disabled {
   box-shadow: 0 6px 18px var(--yellow);
 }
 
-/* Info panel styles */
 .info {
   font-size: 1.1rem;
   margin-bottom: 8px;
   user-select: none;
 }
 
-/* Achievements style */
 .achievement {
   margin: 8px 0;
   font-size: 1rem;
 }
+
 .ach-unlocked {
   font-weight: 700;
   color: var(--green);
 }
 
-/* Timer style */
 #boostTimer {
   font-weight: 600;
   color: var(--yellow);
