@@ -10,7 +10,12 @@
     <!-- Left info panel -->
     <div id="info-panel">
       <h2>How to Play</h2>
-      <p>Click <b>"Brew Coffee!"</b> to make coffees manually. Buy upgrades to automate and boost production!</p>
+      <p>
+        Click <b>"Brew Coffee!"</b> to make coffees manually. Buy upgrades and items to automate and 
+        boost production. Earn <b>Cafe Points</b> by prestiging at 10,000 total coffees — spend them 
+        in the <b>Prestige Shop</b> for permanent boosts and automation unlocks. Activate <b>Coffee Rush</b> 
+        to temporarily double your coffee production.
+      </p>
       <h3>Items</h3>
       <ul>
         <li><b>Barista:</b> Passively brews 1 coffee/sec.</li>
@@ -35,6 +40,11 @@
         </div>
 
         <button id="coffee-btn">Brew Coffee!</button>
+
+        <div class="boost-marketing-container" style="margin-top: 20px; width: 100%; max-width: 400px; text-align: center;">
+          <button class="upgrade-btn" id="boostBtn" style="width: 100%;">Activate Coffee Rush (Ready)</button>
+          <div id="boostTimer" style="margin-top:5px; color: var(--yellow); font-weight:600;">Cooldown: 00:00</div>
+        </div>
 
         <div id="owned-container">
           <h3>Owned</h3>
@@ -73,11 +83,6 @@
           </div>
         </div>
 
-        <div class="boost-marketing-container">
-          <button class="upgrade-btn" id="boostBtn">Activate Coffee Rush (Ready)</button>
-          <div id="boostTimer" style="margin-top:5px; color: var(--yellow); font-weight:600;">Cooldown: 00:00</div>
-        </div>
-
         <div class="prestige-container" style="margin-top: 20px;">
           <h3>Prestige</h3>
           <div>
@@ -96,6 +101,17 @@
             <div id="achievement6" class="achievement">Reach 10,000 Total Coffees Brewed: <span>-</span></div>
             <div id="achievement7" class="achievement">Prestige for the first time: <span>-</span></div>
             <div id="achievement8" class="achievement">Unlock all Brewing Methods: <span>-</span></div>
+
+            <!-- Save / Load collapsible container below achievements -->
+            <button class="toggle-btn" id="saveLoadToggle" style="margin-top: 12px; width: 100%; text-align: left;">
+              Show Save/Load ▼
+            </button>
+            <div id="save-load-container" class="collapsed" style="margin-top: 10px;">
+              <h3>Save / Load</h3>
+              <button class="upgrade-btn" id="exportBtn">Export Save</button>
+              <button class="upgrade-btn" id="importBtn">Import Save</button>
+              <textarea id="importExportArea" placeholder="Paste save data here" rows="4" style="width: 100%; font-family: monospace; margin-top: 8px;"></textarea>
+            </div>
           </div>
         </div>
       </div>
@@ -121,15 +137,37 @@
           </div>
         </div>
 
-        <div id="save-load-container" style="margin-top: 20px;">
-          <h3>Save / Load</h3>
-          <button class="upgrade-btn" id="exportBtn">Export Save</button>
-          <button class="upgrade-btn" id="importBtn">Import Save</button>
-          <textarea id="importExportArea" placeholder="Paste save data here" rows="4" style="width: 100%; font-family: monospace; margin-top: 8px;"></textarea>
-        </div>
+        <!-- Save/Load container moved below achievements, so remove from here -->
       </div>
     </div>
   </div>
+
   <script src="script.js"></script>
+
+  <script>
+    document.getElementById('achievementsToggle').onclick = () => {
+      const container = document.getElementById('achievements-container');
+      const btn = document.getElementById('achievementsToggle');
+      if (container.classList.contains('collapsed')) {
+        container.classList.remove('collapsed');
+        btn.textContent = 'Hide Achievements ▲';
+      } else {
+        container.classList.add('collapsed');
+        btn.textContent = 'Show Achievements ▼';
+      }
+    };
+
+    document.getElementById('saveLoadToggle').onclick = () => {
+      const container = document.getElementById('save-load-container');
+      const btn = document.getElementById('saveLoadToggle');
+      if (container.classList.contains('collapsed')) {
+        container.classList.remove('collapsed');
+        btn.textContent = 'Hide Save/Load ▲';
+      } else {
+        container.classList.add('collapsed');
+        btn.textContent = 'Show Save/Load ▼';
+      }
+    };
+  </script>
 </body>
 </html>
