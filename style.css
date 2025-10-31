@@ -97,8 +97,10 @@ body {
   border-radius: 12px;
   padding: 16px 20px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  margin-top: 15px;
   text-align: left;
   user-select: none;
+  width: 100%;
 }
 
 #owned-container h3 {
