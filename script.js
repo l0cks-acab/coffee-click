@@ -263,6 +263,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Expose brewCoffeeClick globally to allow addons to hook in
+  window.brewCoffeeClick = (amount) => {
+    coffees += amount;
+    totalCoffeesBrewed += amount;
+    updateDisplay();
+  };
+
+  // Setup brew button to call brewCoffeeClick and emoji explode at mouse position
   document.getElementById('coffee-btn').onclick = (event) => {
     const x = event.clientX;
     const y = event.clientY;
@@ -270,9 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     createEmojiExplosion(x, y);
 
     const earned = calculateCoffeePerClick();
-    coffees += earned;
-    totalCoffeesBrewed += earned;
-    updateDisplay();
+    window.brewCoffeeClick(earned);
   };
 
   // Purchase handlers
@@ -553,9 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  updateDisplay();
-
-  // Passive coffee generation per second
+  // Passive coffee generation every second
   setInterval(() => {
     let passive =
       baristas * 1 +
@@ -569,4 +573,6 @@ document.addEventListener('DOMContentLoaded', () => {
     totalCoffeesBrewed += passive;
     updateDisplay();
   }, 1000);
+
+  updateDisplay();
 });
