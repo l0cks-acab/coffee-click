@@ -13,7 +13,6 @@
     { id: 'buyAllBrewing', description: 'Buy All Brewing Methods (1 each)', type: 'buyAllBrewing', target: 1, reward: 20 }
   ];
 
-  // Active quests and completed quests stored locally
   let activeQuests = [];
   let completedQuests = {};
 
@@ -23,7 +22,6 @@
     const today = new Date().toISOString().split('T')[0];
     const storedDate = localStorage.getItem('questDate');
     if (storedDate !== today) {
-      // New day: pick 5 random unique quests
       activeQuests = [];
       completedQuests = {};
       const shuffled = QUEST_POOL.sort(() => 0.5 - Math.random());
@@ -32,7 +30,6 @@
       localStorage.setItem('completedQuests', JSON.stringify(completedQuests));
       localStorage.setItem('questDate', today);
     } else {
-      // Load stored quests
       const saved = localStorage.getItem('activeQuests');
       const completed = localStorage.getItem('completedQuests');
       activeQuests = saved ? JSON.parse(saved) : [];
@@ -89,8 +86,11 @@
             break;
           case 'buyAllBrewing':
             if (type === 'buyAllBrewing') {
-              q.progress = amount >= q.target ? q.target : q.progress;
-              updated = true;
+              const haveAll = window.espressoMachines > 0 && window.pourOverSetups > 0 && window.filterSetups > 0 && window.coldBrewSetups > 0;
+              if (haveAll) {
+                q.progress = q.target;
+                updated = true;
+              }
             }
             break;
           default:
@@ -131,7 +131,7 @@
 
     questsContainer.innerHTML = '';
     activeQuests.forEach(quest => {
-      if (completedQuests[quest.id]) return; // skip claimed quests
+      if (completedQuests[quest.id]) return;
 
       const questDiv = document.createElement('div');
       questDiv.className = 'quest';
@@ -174,9 +174,6 @@
     }
   }
 
-  // Expose the quest progress updater
   window.updateQuestProgress = updateQuestProgress;
-
-  // Initialize quests on page load
   initializeDailyQuests();
 })();
