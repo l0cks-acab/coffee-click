@@ -120,7 +120,6 @@ body {
 .shop-container,
 .boost-marketing-container,
 .prestige-container,
-#brewing-container,
 #achievements-container,
 #save-load-container {
   margin-top: 20px;
@@ -164,7 +163,6 @@ body {
   gap: 20px;
 }
 
-#brewing-container,
 #save-load-container {
   background-color: var(--surface1);
   border-radius: 16px;
