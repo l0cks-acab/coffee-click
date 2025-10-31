@@ -42,10 +42,37 @@ let achievements = {
   allBrewingMethods: false,
 };
 
-// Update UI display
+// Brewing methods passive coffee rates (coffees per second per unit)
+const brewingPassiveRates = {
+  espresso: 1.5,
+  pourOver: 2.5,
+  filter: 4,
+  coldBrew: 6,
+};
+
+function calculateCoffeePerClick() {
+  return coffeePerClick * (1 + espressoMachines * 0.5) * cafePointMultiplier * (boostActive ? 2 : 1);
+}
+
+function calculateAutoClick() {
+  let passiveCoffee =
+    (baristas * 1) +
+    (trucks * 2) +
+    (espressoMachines * brewingPassiveRates.espresso) +
+    (pourOverSetups * brewingPassiveRates.pourOver) +
+    (filterSetups * brewingPassiveRates.filter) +
+    (coldBrewSetups * brewingPassiveRates.coldBrew);
+
+  passiveCoffee *= cafePointMultiplier;
+  if (boostActive) passiveCoffee *= 2;
+  return passiveCoffee;
+}
+
 function updateDisplay() {
   document.getElementById('coffees').textContent = Math.floor(coffees);
-  document.getElementById('coffeePerClick').textContent = coffeePerClick * cafePointMultiplier * (boostActive ? 2 : 1);
+  document.getElementById('coffeePerClick').textContent = calculateCoffeePerClick().toFixed(1);
+  document.getElementById('autoClick').textContent = calculateAutoClick().toFixed(1);
+
   document.getElementById('baristas').textContent = baristas;
   document.getElementById('baristasOwned').textContent = `${baristas} owned`;
   document.getElementById('baristaCost').textContent = baristaCost;
@@ -74,24 +101,21 @@ function updateDisplay() {
 
   document.getElementById('cafePoints').textContent = cafePoints;
 
-  // Passive rates display
-  document.getElementById('espressoRate').textContent = (espressoMachines * 1.5 * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1);
-  document.getElementById('pourOverRate').textContent = (pourOverSetups * 2.5 * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1);
-  document.getElementById('filterRate').textContent = (filterSetups * 4 * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1);
-  document.getElementById('coldBrewRate').textContent = (coldBrewSetups * 6 * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1);
+  document.getElementById('espressoRate').textContent = (espressoMachines * brewingPassiveRates.espresso * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1);
+  document.getElementById('pourOverRate').textContent = (pourOverSetups * brewingPassiveRates.pourOver * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1);
+  document.getElementById('filterRate').textContent = (filterSetups * brewingPassiveRates.filter * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1);
+  document.getElementById('coldBrewRate').textContent = (coldBrewSetups * brewingPassiveRates.coldBrew * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1);
 
-  // Button enable/disable based on affordability
   document.getElementById('buyBaristaBtn').disabled = coffees < baristaCost;
   document.getElementById('buyTruckBtn').disabled = coffees < truckCost;
   document.getElementById('buyEspressoMachineBtn').disabled = coffees < espressoCost;
-  document.getElementById('buyEspressoBtnRight').disabled = coffees < espressoCost;  
+  document.getElementById('buyEspressoBtnRight').disabled = coffees < espressoCost;
   document.getElementById('buyPourOverBtn').disabled = coffees < pourOverCost;
   document.getElementById('buyFilterBtn').disabled = coffees < filterCost;
   document.getElementById('buyColdBrewBtn').disabled = coffees < coldBrewCost;
   document.getElementById('buyUpgradeBtn').disabled = coffees < upgradeCost;
   document.getElementById('prestigeBtn').disabled = totalCoffeesBrewed < 10000;
 
-  // Boost button cooldown
   let boostBtn = document.getElementById('boostBtn');
   if (boostReady && !boostActive) {
     boostBtn.disabled = false;
@@ -104,7 +128,6 @@ function updateDisplay() {
     boostBtn.textContent = 'Coffee Rush (Cooldown)';
   }
 
-  // Achievements unlock
   if (totalCoffeesBrewed >= 100 && !achievements.brew100) {
     document.getElementById('achievement1').innerHTML = 'Brew 100 Coffees: <span class="ach-unlocked">Unlocked!</span>';
     achievements.brew100 = true;
@@ -140,20 +163,6 @@ function updateDisplay() {
   }
 }
 
-function calculateCoffeePerClick() {
-  return coffeePerClick * (1 + espressoMachines * 0.5) * cafePointMultiplier * (boostActive ? 2 : 1);
-}
-
-// Brewing methods passive rates per unit (coffees per second)
-const brewingPassiveRates = {
-  espresso: 1.5,
-  pourOver: 2.5,
-  filter: 4,
-  coldBrew: 6,
-};
-
-// Event handlers
-
 document.getElementById('coffee-btn').onclick = function () {
   let earned = calculateCoffeePerClick();
   coffees += earned;
@@ -179,7 +188,6 @@ document.getElementById('buyTruckBtn').onclick = function () {
   }
 };
 
-// Espresso buy handlers for both buttons (main and right panel)
 function buyEspresso() {
   if (coffees >= espressoCost) {
     coffees -= espressoCost;
@@ -228,15 +236,12 @@ document.getElementById('buyUpgradeBtn').onclick = function () {
   }
 };
 
-// Prestige/reset system
 document.getElementById('prestigeBtn').onclick = function () {
   if (totalCoffeesBrewed >= 10000) {
-    // Calculate cafe points gained on prestige: sqrt of total coffees / 1000 for balance:
     let pointsGained = Math.floor(Math.sqrt(totalCoffeesBrewed / 1000));
     cafePoints += pointsGained;
     cafePointMultiplier = 1 + cafePoints * 0.1;
 
-    // Reset game state (except cafe points)
     coffees = 0;
     totalCoffeesBrewed = 0;
     coffeePerClick = 1;
@@ -266,7 +271,6 @@ document.getElementById('prestigeBtn').onclick = function () {
   }
 };
 
-// Boost logic: Coffee Rush - times 2 production for 30 seconds, 90 seconds cooldown
 document.getElementById('boostBtn').onclick = function () {
   if (!boostReady) return;
   boostActive = true;
@@ -284,7 +288,6 @@ document.getElementById('boostBtn').onclick = function () {
   }, boostCooldown);
 };
 
-// Periodic auto coffee generation - 1s interval
 setInterval(function () {
   let passiveCoffee =
     (baristas * 1) +
@@ -302,9 +305,10 @@ setInterval(function () {
   updateDisplay();
 }, 1000);
 
-// Persistence
-function saveGame() {
-  const gameState = {
+// Export/Import save functions
+
+function exportSave() {
+  const saveData = {
     coffees,
     totalCoffeesBrewed,
     coffeePerClick,
@@ -325,13 +329,15 @@ function saveGame() {
     cafePoints,
     achievements,
   };
-  localStorage.setItem('cafeClickerSave', JSON.stringify(gameState));
+  const jsonStr = JSON.stringify(saveData);
+  return btoa(encodeURIComponent(jsonStr));
 }
 
-function loadGame() {
-  const saved = localStorage.getItem('cafeClickerSave');
-  if (saved) {
-    const gameState = JSON.parse(saved);
+function importSave(encodedStr) {
+  try {
+    const jsonStr = decodeURIComponent(atob(encodedStr));
+    const gameState = JSON.parse(jsonStr);
+
     coffees = gameState.coffees ?? coffees;
     totalCoffeesBrewed = gameState.totalCoffeesBrewed ?? totalCoffeesBrewed;
     coffeePerClick = gameState.coffeePerClick ?? coffeePerClick;
@@ -353,11 +359,29 @@ function loadGame() {
     achievements = gameState.achievements ?? achievements;
 
     cafePointMultiplier = 1 + cafePoints * 0.1;
+
+    updateDisplay();
+    alert('Save imported successfully!');
+  } catch (e) {
+    alert('Invalid save data! Please check your input.');
   }
-  updateDisplay();
 }
 
-setInterval(saveGame, 10000);
-window.addEventListener('beforeunload', saveGame);
+document.getElementById('exportBtn').onclick = function () {
+  const saveHash = exportSave();
+  const textarea = document.getElementById('importExportArea');
+  textarea.value = saveHash;
+  textarea.select();
+  document.execCommand('copy');
+  alert('Save exported and copied to clipboard! You can paste and store it anywhere.');
+};
 
-loadGame();
+document.getElementById('importBtn').onclick = function () {
+  const textarea = document.getElementById('importExportArea');
+  const saveString = textarea.value.trim();
+  if (saveString.length > 0) {
+    importSave(saveString);
+  } else {
+    alert('Please paste your save data in the textarea to import.');
+  }
+};
