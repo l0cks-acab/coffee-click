@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Buy Me A Coffee - Incremental Clicker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h1>☕ Buy Me A Coffee ☕</h1>
+  <div class="info">
+    <span><b>Coffees:</b> <span id="coffees">0</span></span> |
+    <span><b>Per Click:</b> <span id="coffeePerClick">1</span></span> |
+    <span><b>Baristas:</b> <span id="baristas">0</span></span>
+  </div>
+  <button id="coffee-btn">Brew Coffee!</button>
+  <div class="shop">
+    <h3>Shop Upgrades</h3>
+    <button class="upgrade-btn" id="buyBaristaBtn">
+      Hire Barista (<span id="baristaCost">50</span> coffees)
+    </button>
+    <span id="baristasOwned">0 owned</span><br>
+    <button class="upgrade-btn" id="buyUpgradeBtn">
+      Upgrade Coffee Machine (<span id="upgradeCost">100</span> coffees)
+    </button>
+    <span id="upgradeLevel">Level 1</span>
+  </div>
+  <div class="achievements">
+    <h3>Achievements</h3>
+    <div id="achievement1" class="achievement">Brew 100 Coffees: <span>-</span></div>
+    <div id="achievement2" class="achievement">Hire 5 Baristas: <span>-</span></div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
