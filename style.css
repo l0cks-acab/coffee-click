@@ -70,7 +70,8 @@ body {
   align-items: center;
 }
 #brewing-container {
-  background-color: var(--surface1);
+  background-color: var(--mantle);
+  color: var(--text);
   border-radius: 16px;
   padding: 24px;
   width: 280px;
