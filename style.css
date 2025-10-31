@@ -27,7 +27,6 @@
   --mantle: #181825;
   --crust: #11111b;
 }
-
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: var(--base);
@@ -35,15 +34,17 @@ body {
   margin: 0;
   min-height: 100vh;
   padding: 30px;
+  box-sizing: border-box;
 }
 #overall-container {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
   gap: 30px;
   max-width: 1300px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
+
+/* Left info panel */
 #info-panel {
   background-color: var(--mantle);
   color: var(--text);
@@ -53,75 +54,147 @@ body {
   font-size: 0.9rem;
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
+#info-panel h2, #info-panel h3 { color: var(--pink); font-weight: 700; margin-bottom: 10px; }
+#info-panel ul { list-style: disc; margin-left:1.25em; margin-bottom: 20px; }
+
+/* Main container */
 #main-container {
+  flex: 1;
   display: flex;
   gap: 30px;
-  width: 100%;
-  max-width: 900px;
 }
+
+/* Game container */
 #game-container {
   background-color: var(--surface0);
   border-radius: 16px;
   padding: 30px 40px;
-  flex: 1;
+  width: 100%;
   box-shadow: 0 8px 20px rgba(0,0,0,0.7);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
+/* Shop upgrades */
+.shop-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* Boost + Marketing container */
+.boost-marketing-container {
+  margin-top: 15px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Prestige Container */
+.prestige-container {
+  margin-top: 20px;
+  width: 100%;
+  background-color: var(--surface1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+/* Right side panel */
+#right-panel {
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Brewing container */
 #brewing-container {
-  background-color: var(--mantle);
-  color: var(--text);
+  background-color: var(--surface1);
   border-radius: 16px;
   padding: 24px;
-  width: 280px;
-  flex-shrink: 0;
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
+
+/* Achievements container */
+#achievements-container {
+  background-color: var(--surface1);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* Save/Load container */
+#save-load-container {
+  background-color: var(--surface1);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+/* Buttons */
 button.upgrade-btn {
   padding: 10px;
-  margin: 8px 0;
   width: 100%;
+  font-weight: 600;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.3s;
+  background-color: var(--surface1);
+  color: var(--text);
+  transition: background-color 0.3s ease;
 }
+
 button.upgrade-btn:hover:enabled {
   background-color: var(--lavender);
-  box-shadow: 0 3px 12px rgba(127, 132, 156, 0.5);
+  color: var(--crust);
+  box-shadow: 0 3px 12px rgba(127,132,156,0.5);
 }
-button:disabled {
-  opacity: 0.4;
+
+button.upgrade-btn:disabled {
   cursor: not-allowed;
+  opacity: 0.4;
 }
+
 #coffee-btn {
+  width: 100%;
   font-size: 1.5rem;
   padding: 16px 0;
   background-color: var(--peach);
   color: var(--crust);
-  border: none;
   border-radius: 12px;
-  cursor: pointer;
-  width: 100%;
-  font-weight: 600;
+  margin-bottom: 10px;
   box-shadow: 0 4px 12px var(--peach);
-  margin-bottom: 20px;
-  transition: background-color 0.3s;
+  font-weight: 600;
 }
+
 #coffee-btn:hover {
   background-color: var(--yellow);
   box-shadow: 0 6px 18px var(--yellow);
 }
+
+/* Info panel styles */
 .info {
   font-size: 1.1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 8px;
+  user-select: none;
 }
+
+/* Achievements style */
 .achievement {
   margin: 8px 0;
+  font-size: 1rem;
 }
 .ach-unlocked {
-  color: var(--green);
   font-weight: 700;
+  color: var(--green);
+}
+
+/* Timer style */
+#boostTimer {
+  font-weight: 600;
+  color: var(--yellow);
+  text-align: center;
+  margin-top: 5px;
 }
