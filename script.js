@@ -76,6 +76,16 @@ document.addEventListener('DOMContentLoaded', () => {
     coldBrew: 6,
   };
 
+  // Expose relevant variables global for loader.js and quests
+  window.coffees = coffees;
+  window.totalCoffeesBrewed = totalCoffeesBrewed;
+  window.baristas = baristas;
+  window.espressoMachines = espressoMachines;
+  window.pourOverSetups = pourOverSetups;
+  window.filterSetups = filterSetups;
+  window.coldBrewSetups = coldBrewSetups;
+  window.prestigeCount = 0; // You may track prestige count if needed by quests
+
   function calculateCoffeePerClick() {
     return coffeePerClick * (1 + espressoMachines * 0.5) * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
   }
@@ -109,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (boostCooldown < 60000) boostCooldown = 60000;
     boostCooldownRemaining = boostCooldown;
     updateDisplay();
-
     if (boostTimerInterval) clearInterval(boostTimerInterval);
     boostTimerInterval = setInterval(() => {
       boostCooldownRemaining -= 1000;
@@ -262,30 +271,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Expose brewCoffeeClick globally so addons can hook in
+  // Expose brewCoffeeClick globally for quest addon hooking and consistent calls
   window.brewCoffeeClick = (amount) => {
     coffees += amount;
     totalCoffeesBrewed += amount;
+    window.coffees = coffees;
+    window.totalCoffeesBrewed = totalCoffeesBrewed;
     updateDisplay();
-    // Hook for quest addon
     if (window.updateQuestProgress) window.updateQuestProgress('brew', amount);
   };
 
-  // Brew button click handler
   document.getElementById('coffee-btn').onclick = (event) => {
     const x = event.clientX;
     const y = event.clientY;
     createEmojiExplosion(x, y);
-    window.brewCoffeeClick(calculateCoffeePerClick());
+    const earned = calculateCoffeePerClick();
+    window.brewCoffeeClick(earned);
   };
 
-  // Purchase buttons handlers with quest hooks
+  // Purchase handlers with quest progress update where applicable
   document.getElementById('buyBaristaBtn').onclick = () => {
     const cost = getReducedCost(baristaCost);
     if (coffees >= cost) {
       coffees -= cost;
       baristas++;
       baristaCost = Math.floor(baristaCost * 1.55);
+      window.baristas = baristas;
       updateDisplay();
       if (window.updateQuestProgress) window.updateQuestProgress('hire', 1);
     }
@@ -307,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
       coffees -= cost;
       espressoMachines++;
       espressoCost = Math.floor(espressoCost * 1.75);
+      window.espressoMachines = espressoMachines;
       updateDisplay();
       if (window.updateQuestProgress) window.updateQuestProgress('buyEspresso', 1);
     }
@@ -318,6 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
       coffees -= cost;
       pourOverSetups++;
       pourOverCost = Math.floor(pourOverCost * 1.75);
+      window.pourOverSetups = pourOverSetups;
       updateDisplay();
     }
   };
@@ -328,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
       coffees -= cost;
       filterSetups++;
       filterCost = Math.floor(filterCost * 1.8);
+      window.filterSetups = filterSetups;
       updateDisplay();
     }
   };
@@ -338,14 +352,13 @@ document.addEventListener('DOMContentLoaded', () => {
       coffees -= cost;
       coldBrewSetups++;
       coldBrewCost = Math.floor(coldBrewCost * 1.8);
+      window.coldBrewSetups = coldBrewSetups;
       updateDisplay();
     }
   };
 
-  // Other buttons' onclick handlers omitted for brevity but should be implemented similarly...
-
-  // Automation toggles handlers
-  ['Barista','Truck','Espresso','PourOver','Filter','ColdBrew'].forEach(key => {
+  // Automation toggles
+  ['Barista', 'Truck', 'Espresso', 'PourOver', 'Filter', 'ColdBrew'].forEach(key => {
     const el = document.getElementById('auto' + key);
     if (el) {
       el.addEventListener('change', () => {
@@ -354,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Auto-buy interval for automation
+  // Automation buy loop
   setInterval(() => {
     if (automationUnlockCount < 1) return;
     if (automationEnabled.baristas) tryBuy('buyBaristaBtn', baristaCost);
@@ -374,16 +387,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   updateDisplay();
 
-  // Passive coffee generation per second
+  // Passive coffee generation every second
   setInterval(() => {
-    const passive = (baristas * 1) + (trucks * 2) + 
-                    (espressoMachines * brewingPassiveRates.espresso) + 
-                    (pourOverSetups * brewingPassiveRates.pourOver) + 
-                    (filterSetups * brewingPassiveRates.filter) + 
-                    (coldBrewSetups * brewingPassiveRates.coldBrew);
-    const finalPassive = passive * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
-    coffees += finalPassive;
-    totalCoffeesBrewed += finalPassive;
+    let passive =
+      baristas * 1 +
+      trucks * 2 +
+      espressoMachines * brewingPassiveRates.espresso +
+      pourOverSetups * brewingPassiveRates.pourOver +
+      filterSetups * brewingPassiveRates.filter +
+      coldBrewSetups * brewingPassiveRates.coldBrew;
+    passive *= cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
+    coffees += passive;
+    totalCoffeesBrewed += passive;
     updateDisplay();
   }, 1000);
 });
