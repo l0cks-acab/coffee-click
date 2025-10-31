@@ -145,6 +145,7 @@ body {
   width: 100%;
   text-align: left;
   margin-top: 12px;
+  user-select: none;
 }
 
 #achievementsToggle:hover {
@@ -181,6 +182,7 @@ button.upgrade-btn {
   background-color: var(--surface1);
   color: var(--text);
   transition: background-color 0.3s ease;
+  user-select: none;
 }
 
 button.upgrade-btn:hover:enabled {
@@ -204,6 +206,7 @@ button.upgrade-btn:disabled {
   margin-bottom: 10px;
   box-shadow: 0 4px 12px var(--peach);
   font-weight: 600;
+  user-select: none;
 }
 
 #coffee-btn:hover {
@@ -232,4 +235,5 @@ button.upgrade-btn:disabled {
   color: var(--yellow);
   text-align: center;
   margin-top: 5px;
+  user-select: none;
 }
