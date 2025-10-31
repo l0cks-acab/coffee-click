@@ -1,84 +1,162 @@
 (() => {
-  let dailyMissionTarget = 1000;
-  let dailyMissionProgress = 0;
-  const dailyMissionReward = 5;
+  // Quest definitions pool
+  const QUEST_POOL = [
+    { id: 'brew500', description: 'Brew 500 Coffees', type: 'brew', target: 500, reward: 5 },
+    { id: 'brew1000', description: 'Brew 1000 Coffees', type: 'brew', target: 1000, reward: 10 },
+    { id: 'hire10baristas', description: 'Hire 10 Baristas', type: 'hire', target: 10, reward: 10 },
+    { id: 'hire20baristas', description: 'Hire 20 Baristas', type: 'hire', target: 20, reward: 20 },
+    { id: 'prestigeOnce', description: 'Prestige Once', type: 'prestige', target: 1, reward: 15 },
+    { id: 'buy5trucks', description: 'Buy 5 Coffee Trucks', type: 'buyTrucks', target: 5, reward: 12 },
+    { id: 'buy3espresso', description: 'Buy 3 Espresso Machines', type: 'buyEspresso', target: 3, reward: 12 },
+    { id: 'upgradeMachine', description: 'Upgrade Coffee Machine to Level 5', type: 'upgradeLevel', target: 5, reward: 8 },
+    { id: 'brew10000', description: 'Brew 10,000 Coffees', type: 'brew', target: 10000, reward: 25 },
+    { id: 'buyAllBrewing', description: 'Buy All Brewing Methods (1 each)', type: 'buyAllBrewing', target: 1, reward: 20 }
+  ];
 
-  let miniChallengeActive = false;
-  let miniChallengeTarget = 500;
-  let miniChallengeTimeLimit = 60000;
-  let miniChallengeProgress = 0;
-  let miniChallengeTimer = null;
-  const miniChallengeReward = 10;
+  // Store quests accepted and progress
+  let activeQuests = [];
+  let completedQuests = {};
 
-  const dailyMissionText = document.getElementById('dailyMissionText');
-  const miniChallengeText = document.getElementById('miniChallengeText');
-  const startMiniChallengeBtn = document.getElementById('startMiniChallengeBtn');
+  // UI container for quests
+  const questsContainer = document.getElementById('quests-container');
 
-  if (dailyMissionText) {
-    dailyMissionText.textContent = `Daily Mission: Brew ${dailyMissionTarget} coffees. Progress: 0`;
-  }
-  if (miniChallengeText) {
-    miniChallengeText.textContent = `Mini Challenge: Brew ${miniChallengeTarget} coffees in ${miniChallengeTimeLimit/1000} seconds. Not started.`;
-  }
-
-  function updateDailyMissionProgress(amount) {
-    dailyMissionProgress += amount;
-    if (dailyMissionText) {
-      dailyMissionText.textContent = `Daily Mission: Brew ${dailyMissionTarget} coffees. Progress: ${Math.min(dailyMissionProgress, dailyMissionTarget)}`;
+  // Load stored quests or initialize new on page load
+  function initializeDailyQuests() {
+    // Simple daily seed based on date to pick quests different each day
+    const today = new Date().toISOString().split('T')[0];
+    const storedDate = localStorage.getItem('questDate');
+    if (storedDate !== today) {
+      // New day: pick 5 random unique quests
+      activeQuests = [];
+      completedQuests = {};
+      const shuffled = QUEST_POOL.sort(() => 0.5 - Math.random());
+      activeQuests = shuffled.slice(0, 5).map(q => ({ ...q, progress: 0, accepted: false, claimed: false }));
+      localStorage.setItem('activeQuests', JSON.stringify(activeQuests));
+      localStorage.setItem('completedQuests', JSON.stringify(completedQuests));
+      localStorage.setItem('questDate', today);
+    } else {
+      // Restore saved quests
+      const saved = localStorage.getItem('activeQuests');
+      const completed = localStorage.getItem('completedQuests');
+      activeQuests = saved ? JSON.parse(saved) : [];
+      completedQuests = completed ? JSON.parse(completed) : {};
     }
-    if (dailyMissionProgress >= dailyMissionTarget) {
-      alert(`Daily Mission complete! You earned ${dailyMissionReward} Cafe Points!`);
-      window.cafePoints = (window.cafePoints || 0) + dailyMissionReward;
-      dailyMissionProgress = 0;
-      if (dailyMissionText) {
-        dailyMissionText.textContent = `Daily Mission: Brew ${dailyMissionTarget} coffees. Progress: 0`;
+    renderQuests();
+  }
+
+   // Save quests state
+  function saveQuests() {
+    localStorage.setItem('activeQuests', JSON.stringify(activeQuests));
+    localStorage.setItem('completedQuests', JSON.stringify(completedQuests));
+  }
+
+  // Update quest progress by type
+  function updateQuestProgress(type, amount) {
+    let updated = false;
+    activeQuests.forEach(q => {
+      if (q.accepted && !q.claimed && q.type === type) {
+        if (type === 'prestige' && amount >= q.target) {
+          q.progress = q.target;
+          updated = true;
+        } else if (type === 'buyAllBrewing') {
+          // Player needs at least one of each brewing method
+          const haveAll = window.espressoMachines > 0 && window.pourOverSetups > 0 && window.filterSetups > 0 && window.coldBrewSetups > 0;
+          if (haveAll) {
+            q.progress = q.target;
+            updated = true;
+          }
+        } else {
+          q.progress += amount;
+          if (q.progress > q.target) q.progress = q.target;
+          updated = true;
+        }
       }
+    });
+    if (updated) {
+      saveQuests();
+      renderQuests();
+    }
+  }
+
+  // Quest accept handler
+  function acceptQuest(id) {
+    const quest = activeQuests.find(q => q.id === id);
+    if (quest && !quest.accepted) {
+      quest.accepted = true;
+      saveQuests();
+      renderQuests();
+    }
+  }
+
+  // Quest claim handler
+  function claimQuest(id) {
+    const quest = activeQuests.find(q => q.id === id);
+    if (quest && quest.accepted && !quest.claimed && quest.progress >= quest.target) {
+      quest.claimed = true;
+      completedQuests[quest.id] = true;
+      window.cafePoints = (window.cafePoints || 0) + quest.reward;
+      saveQuests();
       if (typeof window.updateDisplay === 'function') window.updateDisplay();
+      renderQuests();
+      alert(`Quest "${quest.description}" completed! You earned ${quest.reward} Cafe Points.`);
     }
   }
 
-  function startMiniChallenge() {
-    if (miniChallengeActive) return;
-    miniChallengeActive = true;
-    miniChallengeProgress = 0;
-    if (miniChallengeText) miniChallengeText.textContent = `Mini Challenge: Brew ${miniChallengeTarget} coffees in ${miniChallengeTimeLimit/1000} seconds. Progress: 0`;
-    if (startMiniChallengeBtn) startMiniChallengeBtn.disabled = true;
+  // Render quests UI
+  function renderQuests() {
+    if (!questsContainer) return;
 
-    miniChallengeTimer = setTimeout(() => {
-      miniChallengeActive = false;
-      if (miniChallengeProgress >= miniChallengeTarget) {
-        alert('Mini Challenge Success! You earned ' + miniChallengeReward + ' Cafe Points!');
-        window.cafePoints = (window.cafePoints || 0) + miniChallengeReward;
-      } else {
-        alert('Mini Challenge Failed! Try again tomorrow.');
-      }
-      if (typeof window.updateDisplay === 'function') window.updateDisplay();
-      if (miniChallengeText) miniChallengeText.textContent = `Mini Challenge: Brew ${miniChallengeTarget} coffees in ${miniChallengeTimeLimit/1000} seconds. Not started.`;
-      if (startMiniChallengeBtn) startMiniChallengeBtn.disabled = false;
-    }, miniChallengeTimeLimit);
-  }
+    questsContainer.innerHTML = '';
+    activeQuests.forEach(quest => {
+      if (completedQuests[quest.id]) return; // skip claimed quests
 
-  const originalBrewCoffeeClick = window.brewCoffeeClick || function(amount){};
-  window.brewCoffeeClick = function(amount) {
-    updateDailyMissionProgress(amount);
-    if (miniChallengeActive) {
-      miniChallengeProgress += amount;
-      if (miniChallengeText) miniChallengeText.textContent = `Mini Challenge: Brew ${miniChallengeTarget} coffees in ${miniChallengeTimeLimit/1000} seconds. Progress: ${Math.min(miniChallengeProgress, miniChallengeTarget)}`;
-      if (miniChallengeProgress >= miniChallengeTarget) {
-        clearTimeout(miniChallengeTimer);
-        miniChallengeTimer = null;
-        miniChallengeActive = false;
-        alert('Mini Challenge Success! You earned ' + miniChallengeReward + ' Cafe Points!');
-        window.cafePoints = (window.cafePoints || 0) + miniChallengeReward;
-        if (typeof window.updateDisplay === 'function') window.updateDisplay();
-        if (miniChallengeText) miniChallengeText.textContent = `Mini Challenge: Brew ${miniChallengeTarget} coffees in ${miniChallengeTimeLimit/1000} seconds. Not started.`;
-        if (startMiniChallengeBtn) startMiniChallengeBtn.disabled = false;
+      const questDiv = document.createElement('div');
+      questDiv.className = 'quest';
+      questDiv.style.marginBottom = '10px';
+      questDiv.style.border = '1px solid var(--surface1)';
+      questDiv.style.padding = '8px';
+      questDiv.style.borderRadius = '8px';
+      questDiv.style.backgroundColor = quest.accepted ? 'var(--surface0)' : 'var(--surface1)';
+
+      const desc = document.createElement('div');
+      desc.textContent = quest.description;
+      desc.style.fontWeight = '600';
+      questDiv.appendChild(desc);
+
+      const progress = document.createElement('div');
+      progress.textContent = `Progress: ${quest.progress} / ${quest.target}`;
+      questDiv.appendChild(progress);
+
+      if (!quest.accepted) {
+        const acceptBtn = document.createElement('button');
+        acceptBtn.textContent = 'Accept Quest';
+        acceptBtn.className = 'upgrade-btn';
+        acceptBtn.style.marginTop = '6px';
+        acceptBtn.onclick = () => acceptQuest(quest.id);
+        questDiv.appendChild(acceptBtn);
+      } else if (quest.progress >= quest.target && !quest.claimed) {
+        const claimBtn = document.createElement('button');
+        claimBtn.textContent = 'Claim Reward';
+        claimBtn.className = 'upgrade-btn';
+        claimBtn.style.marginTop = '6px';
+        claimBtn.onclick = () => claimQuest(quest.id);
+        questDiv.appendChild(claimBtn);
       }
+
+      questsContainer.appendChild(questDiv);
+    });
+
+    if (questsContainer.innerHTML === '') {
+      questsContainer.textContent = 'No quests available today. Check back tomorrow!';
     }
-    originalBrewCoffeeClick(amount);
-  };
-
-  if (startMiniChallengeBtn) {
-    startMiniChallengeBtn.onclick = () => { startMiniChallenge(); };
   }
+
+  // Expose updateQuestProgress for external use
+  window.updateQuestProgress = updateQuestProgress;
+
+  // Initialize quests on page load
+  initializeDailyQuests();
+
+  // Hook into main quest and mission progress tracking
+  // This requires your main script to call window.updateQuestProgress at appropriate moments
 })();
