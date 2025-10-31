@@ -1,6 +1,5 @@
 // script.js
 document.addEventListener('DOMContentLoaded', () => {
-  // Game variables
   let coffees = 0;
   let totalCoffeesBrewed = 0;
   let coffeePerClick = 1;
@@ -77,12 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
     coldBrew: 6,
   };
 
-  // Calculate coffee per click including upgrades and boosts
   function calculateCoffeePerClick() {
     return coffeePerClick * (1 + espressoMachines * 0.5) * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
   }
 
-  // Calculate passive coffee production per second
   function calculatePassiveClick() {
     let basePassive =
       baristas * 1 +
@@ -94,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return basePassive * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
   }
 
-  // Format milliseconds into mm:ss
   function formatTime(ms) {
     let totalSeconds = Math.ceil(ms / 1000);
     let mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
@@ -102,19 +98,18 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${mins}:${secs}`;
   }
 
-  // Get reduced cost applying cost reduction perks
   function getReducedCost(baseCost) {
     const reduction = 0.02 * costReduceCount;
     return Math.ceil(baseCost * Math.max(0.5, 1 - reduction));
   }
 
-  // Start the Coffee Rush boost cooldown timer
   function startBoostCooldown() {
     boostReady = false;
     boostCooldown = baseBoostCooldown - marketingLevel * 15000;
     if (boostCooldown < 60000) boostCooldown = 60000;
     boostCooldownRemaining = boostCooldown;
     updateDisplay();
+
     if (boostTimerInterval) clearInterval(boostTimerInterval);
     boostTimerInterval = setInterval(() => {
       boostCooldownRemaining -= 1000;
@@ -127,13 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
   }
 
-  // Safely set text content of an element by id
   function safeSetText(id, text) {
     const e = document.getElementById(id);
     if (e) e.textContent = text;
   }
 
-  // Update all UI elements with current game state
   function updateDisplay() {
     try {
       safeSetText('coffees', Math.floor(coffees));
@@ -181,8 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkbox = document.getElementById('auto' + key.charAt(0).toUpperCase() + key.slice(1));
         if (checkbox) checkbox.checked = automationEnabled[key];
       }
-      
-      // Achievements updates ...
+
       if (document.getElementById('achievement1') && totalCoffeesBrewed >= 100 && !achievements.brew100) {
         safeSetText('achievement1', 'Brew 100 Coffees: Unlocked!');
         achievements.brew100 = true;
@@ -217,7 +209,6 @@ document.addEventListener('DOMContentLoaded', () => {
         achievements.allBrewingMethods = true;
       }
 
-      // Buttons enable/disable state
       if (document.getElementById('buyBaristaBtn')) document.getElementById('buyBaristaBtn').disabled = coffees < getReducedCost(baristaCost);
       if (document.getElementById('buyTruckBtn')) document.getElementById('buyTruckBtn').disabled = coffees < getReducedCost(truckCost);
       if (document.getElementById('buyEspressoMachineBtn')) document.getElementById('buyEspressoMachineBtn').disabled = coffees < getReducedCost(espressoCost);
@@ -271,7 +262,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Purchase handlers for all items
+  // Expose brewCoffeeClick globally so addons can hook in
+  window.brewCoffeeClick = (amount) => {
+    coffees += amount;
+    totalCoffeesBrewed += amount;
+    updateDisplay();
+    // Hook for quest addon
+    if (window.updateQuestProgress) window.updateQuestProgress('brew', amount);
+  };
+
+  // Brew button click handler
+  document.getElementById('coffee-btn').onclick = (event) => {
+    const x = event.clientX;
+    const y = event.clientY;
+    createEmojiExplosion(x, y);
+    window.brewCoffeeClick(calculateCoffeePerClick());
+  };
+
+  // Purchase buttons handlers with quest hooks
   document.getElementById('buyBaristaBtn').onclick = () => {
     const cost = getReducedCost(baristaCost);
     if (coffees >= cost) {
@@ -300,6 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
       espressoMachines++;
       espressoCost = Math.floor(espressoCost * 1.75);
       updateDisplay();
+      if (window.updateQuestProgress) window.updateQuestProgress('buyEspresso', 1);
     }
   };
 
@@ -333,9 +342,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Boost button & other handlers omitted for brevity but same as before
+  // Other buttons' onclick handlers omitted for brevity but should be implemented similarly...
 
-  // Auto buy automation interval
+  // Automation toggles handlers
+  ['Barista','Truck','Espresso','PourOver','Filter','ColdBrew'].forEach(key => {
+    const el = document.getElementById('auto' + key);
+    if (el) {
+      el.addEventListener('change', () => {
+        automationEnabled[key.toLowerCase()] = el.checked;
+      });
+    }
+  });
+
+  // Auto-buy interval for automation
   setInterval(() => {
     if (automationUnlockCount < 1) return;
     if (automationEnabled.baristas) tryBuy('buyBaristaBtn', baristaCost);
@@ -353,31 +372,18 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.click();
   }
 
-  // Use original brewCoffeeClick as placeholder in case addons don't wrap it:
-  window.brewCoffeeClick = (amount) => {
-    coffees += amount;
-    totalCoffeesBrewed += amount;
-    updateDisplay();
-    if (window.updateQuestProgress) window.updateQuestProgress('brew', amount);
-  };
-
-  // Hook brew button to call wrapper
-  document.getElementById('coffee-btn').onclick = (event) => {
-    const x = event.clientX;
-    const y = event.clientY;
-    createEmojiExplosion(x, y);
-    const earned = calculateCoffeePerClick();
-    window.brewCoffeeClick(earned);
-  };
-
   updateDisplay();
 
-  // Passive coffee production
+  // Passive coffee generation per second
   setInterval(() => {
-    let passive = baristas * 1 + trucks * 2 + espressoMachines * brewingPassiveRates.espresso + pourOverSetups * brewingPassiveRates.pourOver + filterSetups * brewingPassiveRates.filter + coldBrewSetups * brewingPassiveRates.coldBrew;
-    passive *= cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
-    coffees += passive;
-    totalCoffeesBrewed += passive;
+    const passive = (baristas * 1) + (trucks * 2) + 
+                    (espressoMachines * brewingPassiveRates.espresso) + 
+                    (pourOverSetups * brewingPassiveRates.pourOver) + 
+                    (filterSetups * brewingPassiveRates.filter) + 
+                    (coldBrewSetups * brewingPassiveRates.coldBrew);
+    const finalPassive = passive * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
+    coffees += finalPassive;
+    totalCoffeesBrewed += finalPassive;
     updateDisplay();
   }, 1000);
 });
