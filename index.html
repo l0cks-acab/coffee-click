@@ -35,18 +35,31 @@
 
         <button id="coffee-btn">Brew Coffee!</button>
 
+        <!-- Owned counts box -->
+        <div id="owned-container">
+          <h3>Owned</h3>
+          <ul>
+            <li>Baristas: <span id="baristasOwned">0 owned</span></li>
+            <li>Coffee Trucks: <span id="trucksOwned">0 owned</span></li>
+            <li>Espresso Machines: <span id="espressoOwned">0 owned</span></li>
+            <li>Pour Over Setups: <span id="pourOverOwned">0 owned</span></li>
+            <li>Filter Setups: <span id="filterOwned">0 owned</span></li>
+            <li>Cold Brew Setups: <span id="coldBrewOwned">0 owned</span></li>
+          </ul>
+        </div>
+
         <div class="shop-container">
           <h3>Shop Upgrades</h3>
-          <button class="upgrade-btn" id="buyBaristaBtn">Hire Barista (<span id="baristaCost">50</span> coffees)</button> <span id="baristasOwned">0 owned</span><br />
-          <button class="upgrade-btn" id="buyTruckBtn">Buy Coffee Truck (<span id="truckCost">500</span> coffees)</button> <span id="trucksOwned">0 owned</span><br />
-          <button class="upgrade-btn" id="buyEspressoMachineBtn">Buy Espresso Machine (<span id="espressoCost">750</span>)</button> <span id="espressoOwned">0 owned</span><br />
+          <button class="upgrade-btn" id="buyBaristaBtn">Hire Barista (<span id="baristaCost">50</span> coffees)</button><br />
+          <button class="upgrade-btn" id="buyTruckBtn">Buy Coffee Truck (<span id="truckCost">500</span> coffees)</button><br />
+          <button class="upgrade-btn" id="buyEspressoMachineBtn">Buy Espresso Machine (<span id="espressoCost">750</span>)</button><br />
           <button class="upgrade-btn" id="marketingBtn">Marketing Material (<span id="marketingLevel">0</span>/10) - <span id="marketingCost">500</span> coffees</button><br />
-          <button class="upgrade-btn" id="buyUpgradeBtn">Upgrade Coffee Machine (<span id="upgradeCost">100</span>)</button> <span id="upgradeLevel">Level 1</span>
+          <button class="upgrade-btn" id="buyUpgradeBtn">Upgrade Coffee Machine (<span id="upgradeCost">100</span>)</button><br />
         </div>
 
         <div class="boost-marketing-container">
           <button class="upgrade-btn" id="boostBtn">Activate Coffee Rush (Ready)</button>
-          <div id="boostTimer" style="margin-top: 5px; color: var(--yellow); font-weight: 600;">Cooldown: 00:00</div>
+          <div id="boostTimer" style="margin-top:5px; color: var(--yellow); font-weight:600;">Cooldown: 00:00</div>
         </div>
 
         <div class="prestige-container" style="margin-top: 20px;">
@@ -56,8 +69,10 @@
             <button class="upgrade-btn" id="prestigeBtn" disabled>Reset for Cafe Points</button>
           </div>
 
-          <button class="toggle-btn" id="achievementsToggle" style="margin-top:12px;">Show Achievements ▼</button>
-          <div id="achievements-container" class="collapsed" style="margin-top: 10px;">
+          <button class="toggle-btn" id="achievementsToggle" style="margin-top:12px;">
+            Show Achievements ▼
+          </button>
+          <div id="achievements-container" class="collapsed" style="margin-top:10px;">
             <h3>Achievements</h3>
             <div id="achievement1" class="achievement">Brew 100 Coffees: <span>-</span></div>
             <div id="achievement2" class="achievement">Hire 5 Baristas: <span>-</span></div>
@@ -101,6 +116,6 @@
       </div>
     </div>
   </div>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
