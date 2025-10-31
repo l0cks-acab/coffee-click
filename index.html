@@ -26,6 +26,7 @@
       <ul>
         <li>Use Coffee Rush boost to temporarily double all production (cooldown 90s).</li>
         <li>Prestige after 10,000 total coffees to earn Cafe Points for permanent boosts.</li>
+        <li>You can export and import your game save using the controls below.</li>
       </ul>
     </div>
 
@@ -74,6 +75,13 @@
             Cafe Points: <span id="cafePoints">0</span> |
             <button class="upgrade-btn" id="prestigeBtn" disabled>Reset for Cafe Points</button>
           </div>
+        </div>
+
+        <!-- Export/Import Controls -->
+        <div class="save-load-section" style="margin-top: 20px;">
+          <button class="upgrade-btn" id="exportBtn">Export Save</button>
+          <button class="upgrade-btn" id="importBtn">Import Save</button>
+          <textarea id="importExportArea" placeholder="Paste your save here to import" rows="3" style="width:100%; margin-top: 8px; font-family: monospace;"></textarea>
         </div>
 
         <div class="achievements" style="margin-top: 20px;">
