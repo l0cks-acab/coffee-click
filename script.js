@@ -57,6 +57,8 @@ function updateDisplay() {
   document.getElementById('espressoMachines').textContent = espressoMachines;
   document.getElementById('espressoOwned').textContent = `${espressoMachines} owned`;
   document.getElementById('espressoCost').textContent = espressoCost;
+  document.getElementById('espressoOwnedRight').textContent = `${espressoMachines} owned`;
+  document.getElementById('espressoCostRight').textContent = espressoCost;
 
   document.getElementById('pourOverOwned').textContent = `${pourOverSetups} owned`;
   document.getElementById('pourOverCost').textContent = pourOverCost;
@@ -81,7 +83,8 @@ function updateDisplay() {
   // Button enable/disable based on affordability
   document.getElementById('buyBaristaBtn').disabled = coffees < baristaCost;
   document.getElementById('buyTruckBtn').disabled = coffees < truckCost;
-  document.getElementById('buyEspressoBtn').disabled = coffees < espressoCost;
+  document.getElementById('buyEspressoMachineBtn').disabled = coffees < espressoCost;
+  document.getElementById('buyEspressoBtnRight').disabled = coffees < espressoCost;  
   document.getElementById('buyPourOverBtn').disabled = coffees < pourOverCost;
   document.getElementById('buyFilterBtn').disabled = coffees < filterCost;
   document.getElementById('buyColdBrewBtn').disabled = coffees < coldBrewCost;
@@ -138,7 +141,7 @@ function updateDisplay() {
 }
 
 function calculateCoffeePerClick() {
-  return coffeePerClick * (1 + (espressoMachines * 0.5)) * cafePointMultiplier * (boostActive ? 2 : 1);
+  return coffeePerClick * (1 + espressoMachines * 0.5) * cafePointMultiplier * (boostActive ? 2 : 1);
 }
 
 // Brewing methods passive rates per unit (coffees per second)
@@ -176,14 +179,17 @@ document.getElementById('buyTruckBtn').onclick = function () {
   }
 };
 
-document.getElementById('buyEspressoBtn').onclick = function () {
+// Espresso buy handlers for both buttons (main and right panel)
+function buyEspresso() {
   if (coffees >= espressoCost) {
     coffees -= espressoCost;
     espressoMachines += 1;
     espressoCost = Math.floor(espressoCost * 1.75);
     updateDisplay();
   }
-};
+}
+document.getElementById('buyEspressoMachineBtn').onclick = buyEspresso;
+document.getElementById('buyEspressoBtnRight').onclick = buyEspresso;
 
 document.getElementById('buyPourOverBtn').onclick = function () {
   if (coffees >= pourOverCost) {
@@ -233,7 +239,7 @@ document.getElementById('prestigeBtn').onclick = function () {
     // Reset game state (except cafe points)
     coffees = 0;
     totalCoffeesBrewed = 0;
-    coffeePerClick = 1 + upgradeLevel * 0; // reset to base + upgrades (or optionally reset)
+    coffeePerClick = 1;
     upgradeLevel = 1;
 
     baristas = 0;
@@ -261,7 +267,6 @@ document.getElementById('prestigeBtn').onclick = function () {
 };
 
 // Boost logic: Coffee Rush - times 2 production for 30 seconds, 90 seconds cooldown
-
 document.getElementById('boostBtn').onclick = function () {
   if (!boostReady) return;
   boostActive = true;
@@ -297,7 +302,7 @@ setInterval(function () {
   updateDisplay();
 }, 1000);
 
-// Persistence code (save/load) from previous
+// Persistence
 function saveGame() {
   const gameState = {
     coffees,
