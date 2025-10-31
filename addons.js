@@ -13,16 +13,13 @@
     { id: 'buyAllBrewing', description: 'Buy All Brewing Methods (1 each)', type: 'buyAllBrewing', target: 1, reward: 20 }
   ];
 
-  // Store quests accepted and progress
+  // Active quests and completed quests stored locally
   let activeQuests = [];
   let completedQuests = {};
 
-  // UI container for quests
   const questsContainer = document.getElementById('quests-container');
 
-  // Load stored quests or initialize new on page load
   function initializeDailyQuests() {
-    // Simple daily seed based on date to pick quests different each day
     const today = new Date().toISOString().split('T')[0];
     const storedDate = localStorage.getItem('questDate');
     if (storedDate !== today) {
@@ -35,7 +32,7 @@
       localStorage.setItem('completedQuests', JSON.stringify(completedQuests));
       localStorage.setItem('questDate', today);
     } else {
-      // Restore saved quests
+      // Load stored quests
       const saved = localStorage.getItem('activeQuests');
       const completed = localStorage.getItem('completedQuests');
       activeQuests = saved ? JSON.parse(saved) : [];
@@ -44,31 +41,60 @@
     renderQuests();
   }
 
-   // Save quests state
   function saveQuests() {
     localStorage.setItem('activeQuests', JSON.stringify(activeQuests));
     localStorage.setItem('completedQuests', JSON.stringify(completedQuests));
   }
 
-  // Update quest progress by type
   function updateQuestProgress(type, amount) {
     let updated = false;
     activeQuests.forEach(q => {
-      if (q.accepted && !q.claimed && q.type === type) {
-        if (type === 'prestige' && amount >= q.target) {
-          q.progress = q.target;
-          updated = true;
-        } else if (type === 'buyAllBrewing') {
-          // Player needs at least one of each brewing method
-          const haveAll = window.espressoMachines > 0 && window.pourOverSetups > 0 && window.filterSetups > 0 && window.coldBrewSetups > 0;
-          if (haveAll) {
-            q.progress = q.target;
-            updated = true;
-          }
-        } else {
-          q.progress += amount;
-          if (q.progress > q.target) q.progress = q.target;
-          updated = true;
+      if (q.accepted && !q.claimed) {
+        switch (q.type) {
+          case 'prestige':
+            if (type === 'prestige' && amount >= q.target) {
+              q.progress = q.target;
+              updated = true;
+            }
+            break;
+          case 'hire':
+            if (type === 'hire') {
+              q.progress = Math.min(q.progress + amount, q.target);
+              updated = true;
+            }
+            break;
+          case 'brew':
+            if (type === 'brew') {
+              q.progress = Math.min(q.progress + amount, q.target);
+              updated = true;
+            }
+            break;
+          case 'buyTrucks':
+            if (type === 'buyTrucks') {
+              q.progress = Math.min(q.progress + amount, q.target);
+              updated = true;
+            }
+            break;
+          case 'buyEspresso':
+            if (type === 'buyEspresso') {
+              q.progress = Math.min(q.progress + amount, q.target);
+              updated = true;
+            }
+            break;
+          case 'upgradeLevel':
+            if (type === 'upgradeLevel' && amount >= q.target) {
+              q.progress = q.target;
+              updated = true;
+            }
+            break;
+          case 'buyAllBrewing':
+            if (type === 'buyAllBrewing') {
+              q.progress = amount >= q.target ? q.target : q.progress;
+              updated = true;
+            }
+            break;
+          default:
+            break;
         }
       }
     });
@@ -78,7 +104,6 @@
     }
   }
 
-  // Quest accept handler
   function acceptQuest(id) {
     const quest = activeQuests.find(q => q.id === id);
     if (quest && !quest.accepted) {
@@ -88,7 +113,6 @@
     }
   }
 
-  // Quest claim handler
   function claimQuest(id) {
     const quest = activeQuests.find(q => q.id === id);
     if (quest && quest.accepted && !quest.claimed && quest.progress >= quest.target) {
@@ -102,7 +126,6 @@
     }
   }
 
-  // Render quests UI
   function renderQuests() {
     if (!questsContainer) return;
 
@@ -151,12 +174,9 @@
     }
   }
 
-  // Expose updateQuestProgress for external use
+  // Expose the quest progress updater
   window.updateQuestProgress = updateQuestProgress;
 
   // Initialize quests on page load
   initializeDailyQuests();
-
-  // Hook into main quest and mission progress tracking
-  // This requires your main script to call window.updateQuestProgress at appropriate moments
 })();
