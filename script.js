@@ -175,7 +175,10 @@ document.getElementById('buyBaristaBtn').onclick = function () {
     coffees -= baristaCost;
     baristas += 1;
     baristaCost = Math.floor(baristaCost * 1.55);
-    updateDisplay();
+    updateDisplay(console.log('Baristas owned:', baristas);
+const baristaElem = document.getElementById('baristasOwned');
+baristaElem.textContent = `${baristas} owned`;
+console.log('Updated baristasOwned span:', baristaElem.textContent););
   }
 };
 
