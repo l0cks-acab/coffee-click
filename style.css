@@ -110,11 +110,13 @@ body {
 #info-panel {
   background-color: var(--mantle);
   color: var(--text);
-  width: 280px;
+  width: auto;           /* Remove fixed width */
+  max-width: 280px;      /* Keep max width */
   padding: 20px;
   border-radius: 16px;
   font-size: 0.9rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  display: inline-block; /* Fit width to contents */
 }
 
 #info-panel h2,
@@ -230,13 +232,34 @@ body {
   display: none;
 }
 
+/* To keep these boxes stacked vertically */
+.side-boxes-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+  max-width: 280px;
+}
+
 #right-panel {
   width: 280px;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-
+#daily-mission-container,
+#mini-challenge-container,
+#brewing-container {
+  background-color: var(--mantle);
+  color: var(--text);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  margin-top: 20px;
+  max-width: 280px;
+  display: inline-block;
+  font-size: 0.9rem;
+}
 #save-load-container {
   background-color: var(--surface1);
   border-radius: 16px;
