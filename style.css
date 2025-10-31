@@ -1,0 +1,7 @@
+body { font-family: sans-serif; text-align: center; margin-top: 50px; background: #f8f7f5; }
+h1 { color: #6f4e37; }
+#coffee-btn { font-size: 1.25em; padding: 1em 2em; background: #d8ad7c; color: #fff; border: none; border-radius: 8px; }
+.upgrade-btn { padding: 0.5em 1em; margin: 0.5em; }
+.shop, .achievements, .info { background: #fffbe6; border-radius: 8px; padding: 1em; margin: 1em auto; max-width: 400px; }
+.info { font-size: 1.1em; color: #774418; }
+.ach-unlocked { color: #4eaa4b; }
