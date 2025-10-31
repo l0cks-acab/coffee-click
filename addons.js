@@ -1,5 +1,5 @@
 (() => {
-  // Quest definitions pool
+  // Quest definitions pool (only quests, no dailies or mini challenges)
   const QUEST_POOL = [
     { id: 'brew500', description: 'Brew 500 Coffees', type: 'brew', target: 500, reward: 5 },
     { id: 'brew1000', description: 'Brew 1000 Coffees', type: 'brew', target: 1000, reward: 10 },
@@ -175,5 +175,6 @@
   }
 
   window.updateQuestProgress = updateQuestProgress;
+
   initializeDailyQuests();
 })();
