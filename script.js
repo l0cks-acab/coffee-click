@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Game variables
   let coffees = 0;
   let totalCoffeesBrewed = 0;
   let coffeePerClick = 1;
@@ -31,13 +32,33 @@ document.addEventListener('DOMContentLoaded', () => {
   let cafePointMultiplier = 1;
 
   let boostActive = false;
-  const baseBoostCooldown = 300000; // 5 minutes in ms
+  const baseBoostCooldown = 300000;
   let boostCooldown = baseBoostCooldown;
   let boostCooldownRemaining = 0;
   let boostReady = true;
-  const boostDuration = 30000; // 30 seconds
+  const boostDuration = 30000;
 
   let boostTimerInterval = null;
+
+  // Prestige shop upgrades
+  let prodBoostCount = 0;
+  let prodBoostCost = 1;
+
+  let costReduceCount = 0;
+  let costReduceCost = 1;
+
+  let automationUnlockCount = 0;
+  let automationUnlockCost = 3;
+
+  // Automation toggles
+  let automationEnabled = {
+    baristas: false,
+    trucks: false,
+    espresso: false,
+    pourOver: false,
+    filter: false,
+    coldBrew: false,
+  };
 
   let achievements = {
     brew100: false,
@@ -57,11 +78,25 @@ document.addEventListener('DOMContentLoaded', () => {
     coldBrew: 6,
   };
 
+  // Themes and CSS class switching
+  const themes = ['mocha', 'latte', 'frappe', 'macchiato', 'rosewater'];
+  let currentThemeIndex = 0;
+
+  function applyTheme(themeName) {
+    document.body.classList.remove(...themes.map(t => `theme-${t}`));
+    document.body.classList.add(`theme-${themeName}`);
+  }
+  applyTheme(themes[currentThemeIndex]);
+
+  // Calculate coffee per click with boost and prod boost
   function calculateCoffeePerClick() {
-    return coffeePerClick * (1 + espressoMachines * 0.5) * cafePointMultiplier * (boostActive ? 2 : 1);
+    const boostMultiplier = 1 + 0.01 * prodBoostCount;
+    return coffeePerClick * (1 + espressoMachines * 0.5) * cafePointMultiplier * (boostActive ? 2 : 1) * boostMultiplier;
   }
 
+  // Calculate passive coffee production with boosts
   function calculatePassiveClick() {
+    const boostMultiplier = 1 + 0.01 * prodBoostCount;
     let passive =
       baristas * 1 +
       trucks * 2 +
@@ -69,9 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
       pourOverSetups * brewingPassiveRates.pourOver +
       filterSetups * brewingPassiveRates.filter +
       coldBrewSetups * brewingPassiveRates.coldBrew;
-    return passive * cafePointMultiplier * (boostActive ? 2 : 1);
+    return passive * cafePointMultiplier * (boostActive ? 2 : 1) * boostMultiplier;
   }
 
+  // Format time for display mm:ss
   function formatTime(ms) {
     let totalSeconds = Math.ceil(ms / 1000);
     let mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
@@ -79,10 +115,17 @@ document.addEventListener('DOMContentLoaded', () => {
     return `${mins}:${secs}`;
   }
 
+  // Get reduced cost from cost reduction upgrade
+  function getReducedCost(baseCost) {
+    const reduction = 0.02 * costReduceCount;
+    return Math.ceil(baseCost * Math.max(0.5, 1 - reduction));
+  }
+
+  // Start boost cooldown timer
   function startBoostCooldown() {
     boostReady = false;
     boostCooldown = baseBoostCooldown - marketingLevel * 15000;
-    if (boostCooldown < 60000) boostCooldown = 60000; // minimum cooldown 60s
+    if (boostCooldown < 60000) boostCooldown = 60000; 
     boostCooldownRemaining = boostCooldown;
     updateDisplay();
 
@@ -98,11 +141,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 1000);
   }
 
+  // Safe DOM text update
   function safeSetText(id, text) {
     const e = document.getElementById(id);
     if (e) e.textContent = text;
   }
 
+  // Update all UI elements
   function updateDisplay() {
     try {
       safeSetText('coffees', Math.floor(coffees));
@@ -114,20 +159,17 @@ document.addEventListener('DOMContentLoaded', () => {
       safeSetText('baristasOwned', `${baristas} owned`);
       safeSetText('trucksOwned', `${trucks} owned`);
       safeSetText('espressoOwned', `${espressoMachines} owned`);
-      safeSetText('espressoOwnedRight', `${espressoMachines} owned`);
-      safeSetText('pourOverOwned', `${pourOverSetups} owned`);
-      safeSetText('filterOwned', `${filterSetups} owned`);
-      safeSetText('coldBrewOwned', `${coldBrewSetups} owned`);
-
       safeSetText('espressoRate', (espressoMachines * brewingPassiveRates.espresso * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1));
+      safeSetText('pourOverOwned', `${pourOverSetups} owned`);
       safeSetText('pourOverRate', (pourOverSetups * brewingPassiveRates.pourOver * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1));
+      safeSetText('filterOwned', `${filterSetups} owned`);
       safeSetText('filterRate', (filterSetups * brewingPassiveRates.filter * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1));
+      safeSetText('coldBrewOwned', `${coldBrewSetups} owned`);
       safeSetText('coldBrewRate', (coldBrewSetups * brewingPassiveRates.coldBrew * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1));
 
       safeSetText('baristaCost', baristaCost);
       safeSetText('truckCost', truckCost);
       safeSetText('espressoCost', espressoCost);
-      safeSetText('espressoCostRight', espressoCost);
       safeSetText('pourOverCost', pourOverCost);
       safeSetText('filterCost', filterCost);
       safeSetText('coldBrewCost', coldBrewCost);
@@ -137,6 +179,24 @@ document.addEventListener('DOMContentLoaded', () => {
       safeSetText('marketingBtn', `Marketing Material (${marketingLevel}/${marketingMaxLevel}) - ${marketingCost} coffees`);
       safeSetText('marketingLevel', marketingLevel);
       safeSetText('marketingCost', marketingCost);
+
+      safeSetText('prodBoostCost', prodBoostCost);
+      safeSetText('costReduceCost', costReduceCost);
+      safeSetText('automationUnlockCost', automationUnlockCost);
+
+      document.getElementById('buyProdBoostBtn').disabled = cafePoints < prodBoostCost;
+      document.getElementById('buyCostReduceBtn').disabled = cafePoints < costReduceCost;
+      document.getElementById('buyAutomationUnlockBtn').disabled = cafePoints < automationUnlockCost || automationUnlockCount > 0;
+
+      // Show/hide automation toggles
+      const togglePanel = document.getElementById('automation-toggles');
+      togglePanel.style.display = automationUnlockCount > 0 ? 'block' : 'none';
+
+      // Set checkboxes for automation toggles
+      for (const key in automationEnabled) {
+        const checkbox = document.getElementById('auto' + key.charAt(0).toUpperCase() + key.slice(1));
+        if (checkbox) checkbox.checked = automationEnabled[key];
+      }
 
       if (document.getElementById('achievement1') && totalCoffeesBrewed >= 100 && !achievements.brew100) {
         safeSetText('achievement1', 'Brew 100 Coffees: Unlocked!');
@@ -172,15 +232,15 @@ document.addEventListener('DOMContentLoaded', () => {
         achievements.allBrewingMethods = true;
       }
 
-      if (document.getElementById('buyBaristaBtn')) document.getElementById('buyBaristaBtn').disabled = coffees < baristaCost;
-      if (document.getElementById('buyTruckBtn')) document.getElementById('buyTruckBtn').disabled = coffees < truckCost;
-      if (document.getElementById('buyEspressoMachineBtn')) document.getElementById('buyEspressoMachineBtn').disabled = coffees < espressoCost;
-      if (document.getElementById('buyEspressoBtnRight')) document.getElementById('buyEspressoBtnRight').disabled = coffees < espressoCost;
-      if (document.getElementById('buyPourOverBtn')) document.getElementById('buyPourOverBtn').disabled = coffees < pourOverCost;
-      if (document.getElementById('buyFilterBtn')) document.getElementById('buyFilterBtn').disabled = coffees < filterCost;
-      if (document.getElementById('buyColdBrewBtn')) document.getElementById('buyColdBrewBtn').disabled = coffees < coldBrewCost;
-      if (document.getElementById('buyUpgradeBtn')) document.getElementById('buyUpgradeBtn').disabled = coffees < upgradeCost;
-      if (document.getElementById('marketingBtn')) document.getElementById('marketingBtn').disabled = coffees < marketingCost || marketingLevel >= marketingMaxLevel;
+      // Buttons enable/disable state
+      if (document.getElementById('buyBaristaBtn')) document.getElementById('buyBaristaBtn').disabled = coffees < getReducedCost(baristaCost);
+      if (document.getElementById('buyTruckBtn')) document.getElementById('buyTruckBtn').disabled = coffees < getReducedCost(truckCost);
+      if (document.getElementById('buyEspressoMachineBtn')) document.getElementById('buyEspressoMachineBtn').disabled = coffees < getReducedCost(espressoCost);
+      if (document.getElementById('buyPourOverBtn')) document.getElementById('buyPourOverBtn').disabled = coffees < getReducedCost(pourOverCost);
+      if (document.getElementById('buyFilterBtn')) document.getElementById('buyFilterBtn').disabled = coffees < getReducedCost(filterCost);
+      if (document.getElementById('buyColdBrewBtn')) document.getElementById('buyColdBrewBtn').disabled = coffees < getReducedCost(coldBrewCost);
+      if (document.getElementById('buyUpgradeBtn')) document.getElementById('buyUpgradeBtn').disabled = coffees < getReducedCost(upgradeCost);
+      if (document.getElementById('marketingBtn')) document.getElementById('marketingBtn').disabled = coffees < getReducedCost(marketingCost) || marketingLevel >= marketingMaxLevel;
       if (document.getElementById('prestigeBtn')) document.getElementById('prestigeBtn').disabled = totalCoffeesBrewed < 10000;
 
       const boostBtnEl = document.getElementById('boostBtn');
@@ -200,100 +260,197 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  document.getElementById('achievementsToggle').onclick = () => {
-    const container = document.getElementById('achievements-container');
-    const btn = document.getElementById('achievementsToggle');
-    if (container.classList.contains('collapsed')) {
-      container.classList.remove('collapsed');
-      btn.textContent = 'Hide Achievements ▲';
-    } else {
-      container.classList.add('collapsed');
-      btn.textContent = 'Show Achievements ▼';
-    }
-  };
+  // Animated coffee emoji explosion on brew click
+  function createEmojiExplosion(x, y) {
+    const numParticles = 20;
+    const emoji = '☕';
+    for (let i = 0; i < numParticles; i++) {
+      const particle = document.createElement('div');
+      particle.classList.add('emoji-particle');
+      particle.textContent = emoji;
+      document.body.appendChild(particle);
 
-  document.getElementById('coffee-btn').onclick = () => {
+      const angle = Math.random() * 2 * Math.PI;
+      const radius = Math.random() * 100 + 50;
+
+      const dx = Math.cos(angle) * radius + 'px';
+      const dy = Math.sin(angle) * radius + 'px';
+
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      particle.style.setProperty('--dx', dx);
+      particle.style.setProperty('--dy', dy);
+
+      particle.style.animationDelay = `${i * 20}ms`;
+
+      particle.addEventListener('animationend', () => {
+        particle.remove();
+      });
+    }
+  }
+
+  // Brew button click handler with explosion effect
+  document.getElementById('coffee-btn').onclick = (event) => {
+    const rect = event.target.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    createEmojiExplosion(x, y);
+
     const earned = calculateCoffeePerClick();
     coffees += earned;
     totalCoffeesBrewed += earned;
     updateDisplay();
   };
 
+  // Helper function for reduced cost with cost reduction upgrades
+  function getReducedCost(cost) {
+    const reduction = 0.02 * costReduceCount;
+    return Math.ceil(cost * Math.max(0.5, 1 - reduction));
+  }
+
+  // Purchase handlers with cost reduction applied
   document.getElementById('buyBaristaBtn').onclick = () => {
-    if (coffees >= baristaCost) {
-      coffees -= baristaCost;
+    const cost = getReducedCost(baristaCost);
+    if (coffees >= cost) {
+      coffees -= cost;
       baristas++;
       baristaCost = Math.floor(baristaCost * 1.55);
       updateDisplay();
     }
   };
-
   document.getElementById('buyTruckBtn').onclick = () => {
-    if (coffees >= truckCost) {
-      coffees -= truckCost;
+    const cost = getReducedCost(truckCost);
+    if (coffees >= cost) {
+      coffees -= cost;
       trucks++;
       truckCost = Math.floor(truckCost * 1.6);
       updateDisplay();
     }
   };
-
-  function buyEspresso() {
-    if (coffees >= espressoCost) {
-      coffees -= espressoCost;
+  document.getElementById('buyEspressoMachineBtn').onclick = () => {
+    const cost = getReducedCost(espressoCost);
+    if (coffees >= cost) {
+      coffees -= cost;
       espressoMachines++;
       espressoCost = Math.floor(espressoCost * 1.75);
       updateDisplay();
     }
-  }
-  document.getElementById('buyEspressoMachineBtn').onclick = buyEspresso;
-  document.getElementById('buyEspressoBtnRight').onclick = buyEspresso;
-
+  };
   document.getElementById('buyPourOverBtn').onclick = () => {
-    if (coffees >= pourOverCost) {
-      coffees -= pourOverCost;
+    const cost = getReducedCost(pourOverCost);
+    if (coffees >= cost) {
+      coffees -= cost;
       pourOverSetups++;
       pourOverCost = Math.floor(pourOverCost * 1.75);
       updateDisplay();
     }
   };
-
   document.getElementById('buyFilterBtn').onclick = () => {
-    if (coffees >= filterCost) {
-      coffees -= filterCost;
+    const cost = getReducedCost(filterCost);
+    if (coffees >= cost) {
+      coffees -= cost;
       filterSetups++;
       filterCost = Math.floor(filterCost * 1.8);
       updateDisplay();
     }
   };
-
   document.getElementById('buyColdBrewBtn').onclick = () => {
-    if (coffees >= coldBrewCost) {
-      coffees -= coldBrewCost;
+    const cost = getReducedCost(coldBrewCost);
+    if (coffees >= cost) {
+      coffees -= cost;
       coldBrewSetups++;
       coldBrewCost = Math.floor(coldBrewCost * 1.8);
       updateDisplay();
     }
   };
-
   document.getElementById('buyUpgradeBtn').onclick = () => {
-    if (coffees >= upgradeCost) {
-      coffees -= upgradeCost;
+    const cost = getReducedCost(upgradeCost);
+    if (coffees >= cost) {
+      coffees -= cost;
       upgradeLevel++;
       coffeePerClick += upgradeLevel;
       upgradeCost = Math.floor(upgradeCost * 2.2);
       updateDisplay();
     }
   };
-
   document.getElementById('marketingBtn').onclick = () => {
-    if (coffees >= marketingCost && marketingLevel < marketingMaxLevel) {
-      coffees -= marketingCost;
+    const cost = getReducedCost(marketingCost);
+    if (coffees >= cost && marketingLevel < marketingMaxLevel) {
+      coffees -= cost;
       marketingLevel++;
       marketingCost = Math.floor(marketingCost * 1.7);
       updateDisplay();
     }
   };
 
+  // Prestige shop
+  document.getElementById('buyProdBoostBtn').onclick = () => {
+    if (cafePoints >= prodBoostCost) {
+      cafePoints -= prodBoostCost;
+      prodBoostCount++;
+      prodBoostCost = Math.ceil(prodBoostCost * 1.7);
+      updateDisplay();
+    }
+  };
+  document.getElementById('buyCostReduceBtn').onclick = () => {
+    if (cafePoints >= costReduceCost) {
+      cafePoints -= costReduceCost;
+      costReduceCount++;
+      costReduceCost = Math.ceil(costReduceCost * 1.7);
+      updateDisplay();
+    }
+  };
+  document.getElementById('buyAutomationUnlockBtn').onclick = () => {
+    if (cafePoints >= automationUnlockCost && automationUnlockCount < 1) {
+      cafePoints -= automationUnlockCost;
+      automationUnlockCount = 1;
+      updateDisplay();
+    }
+  };
+
+  // Automation toggle listeners
+  for (const key of ['Barista', 'Truck', 'Espresso', 'PourOver', 'Filter', 'ColdBrew']) {
+    const el = document.getElementById('auto' + key);
+    if (el) {
+      el.addEventListener('change', () => {
+        automationEnabled[key.toLowerCase()] = el.checked;
+      });
+    }
+  }
+
+  // Auto-buy interval
+  setInterval(() => {
+    if (automationUnlockCount < 1) return;
+
+    if (automationEnabled.baristas) tryBuy('buyBaristaBtn', baristaCost);
+    if (automationEnabled.trucks) tryBuy('buyTruckBtn', truckCost);
+    if (automationEnabled.espresso) tryBuy('buyEspressoMachineBtn', espressoCost);
+    if (automationEnabled.pourOver) tryBuy('buyPourOverBtn', pourOverCost);
+    if (automationEnabled.filter) tryBuy('buyFilterBtn', filterCost);
+    if (automationEnabled.coldBrew) tryBuy('buyColdBrewBtn', coldBrewCost);
+  }, 1000);
+
+  function tryBuy(buyBtnId, baseCost) {
+    const cost = getReducedCost(baseCost);
+    if (coffees >= cost && !document.getElementById(buyBtnId).disabled) {
+      document.getElementById(buyBtnId).click();
+    }
+  }
+
+  // Boost button handler
+  document.getElementById('boostBtn').onclick = () => {
+    if (!boostReady) return;
+    boostActive = true;
+    updateDisplay();
+    startBoostCooldown();
+    setTimeout(() => {
+      boostActive = false;
+      updateDisplay();
+    }, boostDuration);
+  };
+
+  // Prestige button handler
   document.getElementById('prestigeBtn').onclick = () => {
     if (totalCoffeesBrewed >= 10000) {
       const pointsGained = Math.floor(Math.sqrt(totalCoffeesBrewed / 1000));
@@ -311,7 +468,6 @@ document.addEventListener('DOMContentLoaded', () => {
       trucks = 0;
       truckCost = 500;
 
-      // Brewing methods persist through prestige
       espressoCost = 1000;
       pourOverCost = 2000;
       filterCost = 3500;
@@ -326,31 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  document.getElementById('boostBtn').onclick = () => {
-    if (!boostReady) return;
-    boostActive = true;
-    updateDisplay();
-    startBoostCooldown();
-    setTimeout(() => {
-      boostActive = false;
-      updateDisplay();
-    }, boostDuration);
-  };
-
-  setInterval(() => {
-    let passive =
-      (baristas * 1) +
-      (trucks * 2) +
-      (espressoMachines * brewingPassiveRates.espresso) +
-      (pourOverSetups * brewingPassiveRates.pourOver) +
-      (filterSetups * brewingPassiveRates.filter) +
-      (coldBrewSetups * brewingPassiveRates.coldBrew);
-    passive *= cafePointMultiplier * (boostActive ? 2 : 1);
-    coffees += passive;
-    totalCoffeesBrewed += passive;
-    updateDisplay();
-  }, 1000);
-
+  // Export/import save
   function exportSave() {
     const saveData = {
       coffees,
@@ -374,6 +506,13 @@ document.addEventListener('DOMContentLoaded', () => {
       marketingLevel,
       marketingCost,
       achievements,
+      prodBoostCount,
+      prodBoostCost,
+      costReduceCount,
+      costReduceCost,
+      automationUnlockCount,
+      automationUnlockCost,
+      automationEnabled
     };
     return btoa(encodeURIComponent(JSON.stringify(saveData)));
   }
@@ -404,6 +543,14 @@ document.addEventListener('DOMContentLoaded', () => {
       marketingLevel = data.marketingLevel ?? marketingLevel;
       marketingCost = data.marketingCost ?? marketingCost;
       achievements = data.achievements ?? achievements;
+
+      prodBoostCount = data.prodBoostCount ?? prodBoostCount;
+      prodBoostCost = data.prodBoostCost ?? prodBoostCost;
+      costReduceCount = data.costReduceCount ?? costReduceCount;
+      costReduceCost = data.costReduceCost ?? costReduceCost;
+      automationUnlockCount = data.automationUnlockCount ?? automationUnlockCount;
+      automationUnlockCost = data.automationUnlockCost ?? automationUnlockCost;
+      automationEnabled = data.automationEnabled ?? automationEnabled;
 
       cafePointMultiplier = 1 + cafePoints * 0.1;
 
@@ -443,6 +590,24 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent = 'Show Achievements ▼';
     }
   };
+
+  // Auto-buy handling every second
+  setInterval(() => {
+    if (automationUnlockCount < 1) return;
+    if (automationEnabled.baristas) tryBuy('buyBaristaBtn', baristaCost);
+    if (automationEnabled.trucks) tryBuy('buyTruckBtn', truckCost);
+    if (automationEnabled.espresso) tryBuy('buyEspressoMachineBtn', espressoCost);
+    if (automationEnabled.pourOver) tryBuy('buyPourOverBtn', pourOverCost);
+    if (automationEnabled.filter) tryBuy('buyFilterBtn', filterCost);
+    if (automationEnabled.coldBrew) tryBuy('buyColdBrewBtn', coldBrewCost);
+  }, 1000);
+
+  function tryBuy(buttonId, baseCost) {
+    const cost = getReducedCost(baseCost);
+    const button = document.getElementById(buttonId);
+    if (!button || button.disabled || coffees < cost) return;
+    button.click();
+  }
 
   updateDisplay();
 });
