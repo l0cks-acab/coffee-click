@@ -75,15 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
     coldBrew: 6,
   };
 
-  const themes = ['mocha', 'latte', 'frappe', 'macchiato', 'rosewater'];
-  let currentThemeIndex = 0;
-
-  function applyTheme(themeName) {
-    document.body.classList.remove(...themes.map(t => `theme-${t}`));
-    document.body.classList.add(`theme-${themeName}`);
-  }
-  applyTheme(themes[currentThemeIndex]);
-
   function calculateCoffeePerClick() {
     return coffeePerClick * (1 + espressoMachines * 0.5) * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
   }
@@ -183,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (checkbox) checkbox.checked = automationEnabled[key];
       }
 
-      // Achievements updates
+      // Achievement progress updates
       if (document.getElementById('achievement1') && totalCoffeesBrewed >= 100 && !achievements.brew100) {
         safeSetText('achievement1', 'Brew 100 Coffees: Unlocked!');
         achievements.brew100 = true;
@@ -218,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         achievements.allBrewingMethods = true;
       }
 
-      // Buttons enable/disable state
+      // Enable/disable purchase buttons accordingly
       if (document.getElementById('buyBaristaBtn')) document.getElementById('buyBaristaBtn').disabled = coffees < getReducedCost(baristaCost);
       if (document.getElementById('buyTruckBtn')) document.getElementById('buyTruckBtn').disabled = coffees < getReducedCost(truckCost);
       if (document.getElementById('buyEspressoMachineBtn')) document.getElementById('buyEspressoMachineBtn').disabled = coffees < getReducedCost(espressoCost);
@@ -275,9 +266,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.getElementById('coffee-btn').onclick = (event) => {
-    const rect = event.target.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
+    const x = event.clientX;
+    const y = event.clientY;
 
     createEmojiExplosion(x, y);
 
@@ -287,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDisplay();
   };
 
-  // Purchase handlers implementing getReducedCost and updating display, etc.
+  // Purchase handlers
   document.getElementById('buyBaristaBtn').onclick = () => {
     const cost = getReducedCost(baristaCost);
     if (coffees >= cost) {
@@ -297,6 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDisplay();
     }
   };
+
   document.getElementById('buyTruckBtn').onclick = () => {
     const cost = getReducedCost(truckCost);
     if (coffees >= cost) {
@@ -306,6 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDisplay();
     }
   };
+
   document.getElementById('buyEspressoMachineBtn').onclick = () => {
     const cost = getReducedCost(espressoCost);
     if (coffees >= cost) {
@@ -315,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDisplay();
     }
   };
+
   document.getElementById('buyPourOverBtn').onclick = () => {
     const cost = getReducedCost(pourOverCost);
     if (coffees >= cost) {
@@ -324,6 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDisplay();
     }
   };
+
   document.getElementById('buyFilterBtn').onclick = () => {
     const cost = getReducedCost(filterCost);
     if (coffees >= cost) {
@@ -333,6 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDisplay();
     }
   };
+
   document.getElementById('buyColdBrewBtn').onclick = () => {
     const cost = getReducedCost(coldBrewCost);
     if (coffees >= cost) {
@@ -342,6 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDisplay();
     }
   };
+
   document.getElementById('buyUpgradeBtn').onclick = () => {
     const cost = getReducedCost(upgradeCost);
     if (coffees >= cost) {
@@ -352,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDisplay();
     }
   };
+
   document.getElementById('marketingBtn').onclick = () => {
     const cost = getReducedCost(marketingCost);
     if (coffees >= cost && marketingLevel < marketingMaxLevel) {
@@ -362,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Prestige shop handlers
+  // Prestige shop buy handlers
   document.getElementById('buyProdBoostBtn').onclick = () => {
     if (cafePoints >= prodBoostCost) {
       cafePoints -= prodBoostCost;
@@ -371,6 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDisplay();
     }
   };
+
   document.getElementById('buyCostReduceBtn').onclick = () => {
     if (cafePoints >= costReduceCost) {
       cafePoints -= costReduceCost;
@@ -379,6 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDisplay();
     }
   };
+
   document.getElementById('buyAutomationUnlockBtn').onclick = () => {
     if (cafePoints >= automationUnlockCost && automationUnlockCount < 1) {
       cafePoints -= automationUnlockCost;
@@ -387,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Automation toggle listeners
+  // Automation toggles listeners
   for (const key of ['Barista', 'Truck', 'Espresso', 'PourOver', 'Filter', 'ColdBrew']) {
     const el = document.getElementById('auto' + key);
     if (el) {
@@ -397,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Automation auto buy interval
+  // Auto-buy interval
   setInterval(() => {
     if (automationUnlockCount < 1) return;
     if (automationEnabled.baristas) tryBuy('buyBaristaBtn', baristaCost);
@@ -410,9 +409,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function tryBuy(buttonId, baseCost) {
     const cost = getReducedCost(baseCost);
-    const button = document.getElementById(buttonId);
-    if (!button || button.disabled || coffees < cost) return;
-    button.click();
+    const btn = document.getElementById(buttonId);
+    if (!btn || btn.disabled || coffees < cost) return;
+    btn.click();
   }
 
   // Boost button handler
@@ -458,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Export save
+  // Export and import functions and handlers
   function exportSave() {
     const saveData = {
       coffees,
@@ -493,7 +492,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return btoa(encodeURIComponent(JSON.stringify(saveData)));
   }
 
-  // Import save
   function importSave(encodedStr) {
     try {
       const decoded = decodeURIComponent(atob(encodedStr));
@@ -568,7 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Passive coffee generation every second
+  // Passive coffee production per second
   setInterval(() => {
     let passive =
       baristas * 1 +
