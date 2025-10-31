@@ -7,24 +7,23 @@
 </head>
 <body>
 <div id="overall-container">
-  <!-- Left info panel -->
+  <!-- Info Panel (Left) -->
   <div id="info-panel">
     <h2>How to Play</h2>
-    <p>Click <b>"Brew Coffee!"</b> to make coffees manually. Buy upgrades to automate and boost production! Export or import your save data using the controls below.</p>
+    <p>Click <b>"Brew Coffee!"</b> to make coffees manually. Buy upgrades to automate and boost production!</p>
     <h3>Items</h3>
     <ul>
       <li><b>Barista:</b> Automates 1 coffee/sec.</li>
       <li><b>Coffee Truck:</b> Automates 2 coffees/sec.</li>
       <li><b>Espresso Machine:</b> Increases coffee per click by 50% each owned.</li>
-      <li><b>Pour Over:</b> Passively brews 2.5 coffees/sec.</li>
-      <li><b>Filter:</b> Passively brews 4 coffees/sec.</li>
-      <li><b>Cold Brew:</b> Passively brews 6 coffees/sec.</li>
+      <li><b>Pour Over Setup:</b> Passively brews 2.5 coffees/sec.</li>
+      <li><b>Filter Setup:</b> Passively brews 4 coffees/sec.</li>
+      <li><b>Cold Brew Setup:</b> Passively brews 6 coffees/sec.</li>
     </ul>
   </div>
 
-  <!-- Main game and brewing methods -->
   <div id="main-container">
-    <!-- Main game panel -->
+    <!-- Main Game Panel -->
     <div id="game-container">
       <h1>☕ Cafe Clicker ☕</h1>
       <div class="info">
@@ -33,52 +32,67 @@
         <span><b>Auto Click:</b> <span id="autoClick">0</span></span> |
         <span><b>Cafe Points:</b> <span id="cafePoints">0</span></span>
       </div>
+
       <button id="coffee-btn">Brew Coffee!</button>
-      
-      <!-- Shop upgrades buttons -->
-      <div class="shop">
+
+      <!-- Coffee Rush + Marketing Container -->
+      <div class="boost-marketing-container">
+        <button class="upgrade-btn" id="boostBtn">Activate Coffee Rush (Ready)</button>
+        <div id="boostTimer" style="margin-top: 5px; color: var(--yellow); font-weight: 600;">Cooldown: 00:00</div>
+
+        <button class="upgrade-btn" id="marketingBtn">Marketing Material (0/10) - 500 coffees</button>
+      </div>
+
+      <!-- Shop upgrades container -->
+      <div class="shop-container">
         <h3>Shop Upgrades</h3>
         <button class="upgrade-btn" id="buyBaristaBtn">
           Hire Barista (<span id="baristaCost">50</span> coffees)
-        </button>
-        <span id="baristasOwned">0 owned</span><br />
+        </button><span id="baristasOwned">0 owned</span><br />
         <button class="upgrade-btn" id="buyTruckBtn">
           Buy Coffee Truck (<span id="truckCost">500</span> coffees)
-        </button>
-        <span id="trucksOwned">0 owned</span><br />
+        </button><span id="trucksOwned">0 owned</span><br />
         <button class="upgrade-btn" id="buyEspressoMachineBtn">
           Buy Espresso Machine (<span id="espressoCost">750</span>)
-        </button>
-        <span id="espressoOwned">0 owned</span><br />
+        </button><span id="espressoOwned">0 owned</span><br />
         <button class="upgrade-btn" id="buyUpgradeBtn">
           Upgrade Coffee Machine (<span id="upgradeCost">100</span>)
-        </button>
-        <span id="upgradeLevel">Level 1</span>
+        </button><span id="upgradeLevel">Level 1</span>
       </div>
 
-      <!-- Boost button -->
-      <div style="margin-top: 12px;">
-        <button class="upgrade-btn" id="boostBtn">Activate Coffee Rush (Cooldown)</button>
-      </div>
-
-      <!-- Prestige system -->
-      <div class="prestige" style="margin-top: 20px;">
+      <!-- Prestige Panel below Info -->
+      <div class="prestige-container">
         <h3>Prestige</h3>
         <div>
           Cafe Points: <span id="cafePoints">0</span> |
           <button class="upgrade-btn" id="prestigeBtn" disabled>Reset for Cafe Points</button>
         </div>
       </div>
+    </div>
 
-      <!-- Export/Import save -->
-      <div class="save-load-section" style="margin-top:20px;">
-        <button class="upgrade-btn" id="exportBtn">Export Save</button>
-        <button class="upgrade-btn" id="importBtn">Import Save</button>
-        <textarea id="importExportArea" placeholder="Paste save data here" rows="3" style="width: 100%; margin-top:8px; font-family: monospace;"></textarea>
+    <!-- Right Panel (Brewing Methods + Achievements + Save/Load) -->
+    <div id="right-panel">
+      <div id="brewing-container">
+        <h3>Brewing Methods</h3>
+        <div>
+          <button class="upgrade-btn" id="buyEspressoBtnRight">Buy Espresso Machine (Cost: <span id="espressoCostRight">1000</span>)</button>
+          Owned: <span id="espressoOwnedRight">0</span>, Passive Rate: <span id="espressoRate">0</span> coffees/sec
+        </div>
+        <div>
+          <button class="upgrade-btn" id="buyPourOverBtn">Buy Pour Over Setup (Cost: <span id="pourOverCost">2000</span>)</button>
+          Owned: <span id="pourOverOwned">0</span>, Passive Rate: <span id="pourOverRate">0</span> coffees/sec
+        </div>
+        <div>
+          <button class="upgrade-btn" id="buyFilterBtn">Buy Filter Coffee Setup (Cost: <span id="filterCost">3500</span>)</button>
+          Owned: <span id="filterOwned">0</span>, Passive Rate: <span id="filterRate">0</span> coffees/sec
+        </div>
+        <div>
+          <button class="upgrade-btn" id="buyColdBrewBtn">Buy Cold Brew Setup (Cost: <span id="coldBrewCost">5000</span>)</button>
+          Owned: <span id="coldBrewOwned">0</span>, Passive Rate: <span id="coldBrewRate">0</span> coffees/sec
+        </div>
       </div>
 
-      <!-- Achievements -->
-      <div class="achievements" style="margin-top:20px;">
+      <div id="achievements-container">
         <h3>Achievements</h3>
         <div id="achievement1" class="achievement">Brew 100 Coffees: <span>-</span></div>
         <div id="achievement2" class="achievement">Hire 5 Baristas: <span>-</span></div>
@@ -89,27 +103,14 @@
         <div id="achievement7" class="achievement">Prestige for the first time: <span>-</span></div>
         <div id="achievement8" class="achievement">Unlock all Brewing Methods: <span>-</span></div>
       </div>
-    </div>
 
-    <!-- Brewing methods panel -->
-    <div id="brewing-container">
-      <h3>Brewing Methods</h3>
-      <div>
-        <button class="upgrade-btn" id="buyEspressoBtnRight">Buy Espresso Machine (Cost: <span id="espressoCostRight">1000</span>)</button>
-        Owned: <span id="espressoOwnedRight">0</span>, Passive Rate: <span id="espressoRate">0</span> coffees/sec
+      <div id="save-load-container">
+        <h3>Save / Load</h3>
+        <button class="upgrade-btn" id="exportBtn">Export Save</button>
+        <button class="upgrade-btn" id="importBtn">Import Save</button>
+        <textarea id="importExportArea" placeholder="Paste save data here" rows="4" style="width: 100%; font-family: monospace; margin-top: 8px;"></textarea>
       </div>
-      <div>
-        <button class="upgrade-btn" id="buyPourOverBtn">Buy Pour Over Setup (Cost: <span id="pourOverCost">2000</span>)</button>
-        Owned: <span id="pourOverOwned">0</span>, Passive Rate: <span id="pourOverRate">0</span> coffees/sec
-      </div>
-      <div>
-        <button class="upgrade-btn" id="buyFilterBtn">Buy Filter Coffee Setup (Cost: <span id="filterCost">3500</span>)</button>
-        Owned: <span id="filterOwned">0</span>, Passive Rate: <span id="filterRate">0</span> coffees/sec
-      </div>
-      <div>
-        <button class="upgrade-btn" id="buyColdBrewBtn">Buy Cold Brew Setup (Cost: <span id="coldBrewCost">5000</span>)</button>
-        Owned: <span id="coldBrewOwned">0</span>, Passive Rate: <span id="coldBrewRate">0</span> coffees/sec
-      </div>
+
     </div>
   </div>
 </div>
