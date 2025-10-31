@@ -114,3 +114,50 @@ setInterval(function () {
 }, 1000);
 
 updateDisplay();
+// Save game state to localStorage
+function saveGame() {
+  const gameState = {
+    coffees,
+    coffeePerClick,
+    upgradeLevel,
+    baristas,
+    baristaCost,
+    trucks,
+    truckCost,
+    espressoMachines,
+    espressoCost,
+    upgradeCost,
+    achievements,
+  };
+  localStorage.setItem('cafeClickerSave', JSON.stringify(gameState));
+}
+
+// Load game state from localStorage, if exists
+function loadGame() {
+  const saved = localStorage.getItem('cafeClickerSave');
+  if (saved) {
+    const gameState = JSON.parse(saved);
+    coffees = gameState.coffees ?? coffees;
+    coffeePerClick = gameState.coffeePerClick ?? coffeePerClick;
+    upgradeLevel = gameState.upgradeLevel ?? upgradeLevel;
+    baristas = gameState.baristas ?? baristas;
+    baristaCost = gameState.baristaCost ?? baristaCost;
+    trucks = gameState.trucks ?? trucks;
+    truckCost = gameState.truckCost ?? truckCost;
+    espressoMachines = gameState.espressoMachines ?? espressoMachines;
+    espressoCost = gameState.espressoCost ?? espressoCost;
+    upgradeCost = gameState.upgradeCost ?? upgradeCost;
+    achievements = gameState.achievements ?? achievements;
+  }
+  updateDisplay();
+}
+
+// Save progress every 10 seconds
+setInterval(saveGame, 10000);
+
+// Save on page unload (close/tab change)
+window.addEventListener('beforeunload', saveGame);
+
+// Load game once on script start
+loadGame();
+
