@@ -9,41 +9,58 @@
   <div id="game-container">
     <h1>☕ Cafe Clicker ☕</h1>
     <div class="info">
-      <span><b>Coffees:</b> <span id="coffees">0</span></span> |
-      <span><b>Per Click:</b> <span id="coffeePerClick">1</span></span> |
-      <span><b>Baristas:</b> <span id="baristas">0</span></span> |
-      <span><b>Trucks:</b> <span id="trucks">0</span></span>
-    </div>
-    <button id="coffee-btn">☕Brew Coffee!</button>
-    <div class="shop">
-      <h3>Shop Upgrades</h3>
-      <button class="upgrade-btn" id="buyBaristaBtn">
-        Hire Barista (<span id="baristaCost">50</span> coffees)
-      </button>
-      <span id="baristasOwned">0 owned</span><br />
+  <span><b>Coffees:</b> <span id="coffees">0</span></span> |
+  <span><b>Per Click:</b> <span id="coffeePerClick">1</span></span> |
+  <span><b>Baristas:</b> <span id="baristas">0</span></span> |
+  <span><b>Trucks:</b> <span id="trucks">0</span></span> |
+  <span><b>Espresso Machines:</b> <span id="espressoMachines">0</span></span>
+</div>
 
-      <button class="upgrade-btn" id="buyTruckBtn">
-        Buy Coffee Truck (<span id="truckCost">500</span> coffees)
-      </button>
-      <span id="trucksOwned">0 owned</span><br />
+<button id="coffee-btn">Brew Coffee!</button>
 
-      <button class="upgrade-btn" id="buyEspressoMachineBtn">
-        Buy Espresso Machine (<span id="espressoCost">750</span> coffees)
-      </button>
-      <span id="espressoOwned">0 owned</span><br />
+<!-- New: Temporary Boost Button -->
+<div style="margin-top: 12px;">
+  <button class="upgrade-btn" id="boostBtn">Activate Coffee Rush (Cooldown)</button>
+</div>
 
-      <button class="upgrade-btn" id="buyUpgradeBtn">
-        Upgrade Coffee Machine (<span id="upgradeCost">100</span> coffees)
-      </button>
-      <span id="upgradeLevel">Level 1</span>
-    </div>
+<div class="brew-methods">
+  <h3>Brewing Methods</h3>
+  <div>
+    <button class="upgrade-btn" id="buyEspressoBtn">Buy Espresso Machine (Cost: <span id="espressoCost">1000</span>)</button>
+    Owned: <span id="espressoOwned">0</span>, Passive Rate: <span id="espressoRate">0</span> coffees/sec
+  </div>
+  <div>
+    <button class="upgrade-btn" id="buyPourOverBtn">Buy Pour Over Setup (Cost: <span id="pourOverCost">2000</span>)</button>
+    Owned: <span id="pourOverOwned">0</span>, Passive Rate: <span id="pourOverRate">0</span> coffees/sec
+  </div>
+  <div>
+    <button class="upgrade-btn" id="buyFilterBtn">Buy Filter Coffee Setup (Cost: <span id="filterCost">3500</span>)</button>
+    Owned: <span id="filterOwned">0</span>, Passive Rate: <span id="filterRate">0</span> coffees/sec
+  </div>
+  <div>
+    <button class="upgrade-btn" id="buyColdBrewBtn">Buy Cold Brew Setup (Cost: <span id="coldBrewCost">5000</span>)</button>
+    Owned: <span id="coldBrewOwned">0</span>, Passive Rate: <span id="coldBrewRate">0</span> coffees/sec
+  </div>
+</div>
+
+<div class="prestige">
+  <h3>Prestige</h3>
+  <div>
+    Cafe Points: <span id="cafePoints">0</span> |
+    <button class="upgrade-btn" id="prestigeBtn" disabled>Reset for Cafe Points</button>
+  </div>
+</div>
     <div class="achievements">
-      <h3>Achievements</h3>
-      <div id="achievement1" class="achievement">Brew 100 Coffees: <span>-</span></div>
-      <div id="achievement2" class="achievement">Hire 5 Baristas: <span>-</span></div>
-      <div id="achievement3" class="achievement">Buy 3 Coffee Trucks: <span>-</span></div>
-      <div id="achievement4" class="achievement">Buy 2 Espresso Machines: <span>-</span></div>
-    </div>
+  <h3>Achievements</h3>
+  <div id="achievement1" class="achievement">Brew 100 Coffees: <span>-</span></div>
+  <div id="achievement2" class="achievement">Hire 5 Baristas: <span>-</span></div>
+  <div id="achievement3" class="achievement">Buy 3 Coffee Trucks: <span>-</span></div>
+  <div id="achievement4" class="achievement">Buy 2 Espresso Machines: <span>-</span></div>
+  <div id="achievement5" class="achievement">Activate Coffee Rush Boost: <span>-</span></div>
+  <div id="achievement6" class="achievement">Reach 10,000 Total Coffees Brewed: <span>-</span></div>
+  <div id="achievement7" class="achievement">Prestige for the first time: <span>-</span></div>
+  <div id="achievement8" class="achievement">Unlock all Brewing Methods: <span>-</span></div>
+</div>
   </div>
   <script src="script.js"></script>
 </body>
