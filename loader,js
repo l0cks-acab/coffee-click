@@ -1,0 +1,46 @@
+// loader.js
+
+(() => {
+  // Keys to save/load game state
+  const SAVE_KEY = 'cafeClickerSave';
+
+  // Save the entire game state object
+  function saveGame(gameState) {
+    try {
+      const serialized = btoa(encodeURIComponent(JSON.stringify(gameState)));
+      localStorage.setItem(SAVE_KEY, serialized);
+      console.log('Game saved successfully.');
+    } catch (e) {
+      console.error('Failed to save game:', e);
+    }
+  }
+
+  // Load and parse game state from localStorage
+  function loadGame() {
+    try {
+      const data = localStorage.getItem(SAVE_KEY);
+      if (!data) return null;
+
+      const decoded = decodeURIComponent(atob(data));
+      const gameState = JSON.parse(decoded);
+      console.log('Game loaded successfully.');
+      return gameState;
+    } catch (e) {
+      console.error('Failed to load game:', e);
+      return null;
+    }
+  }
+
+  // Clear saved game (optional utility)
+  function clearSave() {
+    localStorage.removeItem(SAVE_KEY);
+    console.log('Save cleared.');
+  }
+
+  // Expose APIs on window for your main scripts to call
+  window.gameSaveManager = {
+    saveGame,
+    loadGame,
+    clearSave,
+  };
+})();
