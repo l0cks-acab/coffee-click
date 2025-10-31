@@ -1,7 +1,144 @@
-body { font-family: sans-serif; text-align: center; margin-top: 50px; background: #f8f7f5; }
-h1 { color: #6f4e37; }
-#coffee-btn { font-size: 1.25em; padding: 1em 2em; background: #d8ad7c; color: #fff; border: none; border-radius: 8px; }
-.upgrade-btn { padding: 0.5em 1em; margin: 0.5em; }
-.shop, .achievements, .info { background: #fffbe6; border-radius: 8px; padding: 1em; margin: 1em auto; max-width: 400px; }
-.info { font-size: 1.1em; color: #774418; }
-.ach-unlocked { color: #4eaa4b; }
+/* Catppuccin pastel-inspired colors (Mocha variant warm tones) */
+:root {
+  --rosewater: #f5e0dc;
+  --flamingo: #f2cdcd;
+  --pink: #f5c2e7;
+  --mauve: #cba6f7;
+  --red: #f38ba8;
+  --maroon: #eba0ac;
+  --peach: #fab387;
+  --yellow: #f9e2af;
+  --green: #a6e3a1;
+  --teal: #94e2d5;
+  --sky: #89dceb;
+  --sapphire: #74c7ec;
+  --blue: #89b4fa;
+  --lavender: #b4befe;
+  --text: #cdd6f4;
+  --subtext1: #bac2de;
+  --subtext0: #a6adc8;
+  --overlay2: #9399b2;
+  --overlay1: #7f849c;
+  --overlay0: #6c7086;
+  --surface2: #585b70;
+  --surface1: #45475a;
+  --surface0: #313244;
+  --base: #1e1e2e;
+  --mantle: #181825;
+  --crust: #11111b;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--base);
+  color: var(--text);
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#game-container {
+  background-color: var(--surface0);
+  border-radius: 16px;
+  padding: 30px 40px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+  text-align: center;
+}
+
+h1 {
+  color: var(--peach);
+  margin-bottom: 1rem;
+  font-weight: 700;
+  font-size: 2.2rem;
+  user-select: none;
+}
+
+.info {
+  font-size: 1.2rem;
+  color: var(--subtext1);
+  margin-bottom: 1.5rem;
+  user-select: none;
+}
+
+#coffee-btn {
+  font-size: 1.5rem;
+  padding: 16px 0;
+  background-color: var(--peach);
+  color: var(--crust);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 12px var(--peach);
+  user-select: none;
+}
+
+#coffee-btn:hover {
+  background-color: var(--yellow);
+  box-shadow: 0 6px 18px var(--yellow);
+}
+
+.shop, .achievements {
+  background-color: var(--mantle);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 30px;
+  color: var(--subtext0);
+  user-select: none;
+}
+
+.shop h3, .achievements h3 {
+  color: var(--pink);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.upgrade-btn {
+  padding: 10px 15px;
+  margin: 8px 0;
+  background-color: var(--surface1);
+  color: var(--text);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  user-select: none;
+}
+
+.upgrade-btn:hover:not(:disabled) {
+  background-color: var(--lavender);
+  color: var(--crust);
+  box-shadow: 0 3px 12px var(--lavender);
+}
+
+.upgrade-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#baristasOwned, #upgradeLevel {
+  display: inline-block;
+  margin-left: 12px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.achievement {
+  margin: 8px 0;
+  font-size: 1rem;
+}
+
+.ach-unlocked {
+  color: var(--green);
+  font-weight: 700;
+}
