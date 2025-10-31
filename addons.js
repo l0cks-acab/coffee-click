@@ -1,23 +1,19 @@
-// addons.js
 (() => {
-  // Mission & Challenge state
-  let dailyMissionTarget = 1000;  // Brew 1000 coffees today
+  let dailyMissionTarget = 1000;
   let dailyMissionProgress = 0;
-  const dailyMissionReward = 5;   // Cafe points for completing daily mission
+  const dailyMissionReward = 5;
 
   let miniChallengeActive = false;
   let miniChallengeTarget = 500;
-  let miniChallengeTimeLimit = 60000; // 60 seconds
+  let miniChallengeTimeLimit = 60000;
   let miniChallengeProgress = 0;
   let miniChallengeTimer = null;
-  const miniChallengeReward = 10; // Cafe points for mini-challenge
+  const miniChallengeReward = 10;
 
-  // Elements for UI
   const dailyMissionText = document.getElementById('dailyMissionText');
   const miniChallengeText = document.getElementById('miniChallengeText');
   const startMiniChallengeBtn = document.getElementById('startMiniChallengeBtn');
 
-  // Initialize UI text
   if (dailyMissionText) {
     dailyMissionText.textContent = `Daily Mission: Brew ${dailyMissionTarget} coffees. Progress: 0`;
   }
@@ -25,7 +21,6 @@
     miniChallengeText.textContent = `Mini Challenge: Brew ${miniChallengeTarget} coffees in ${miniChallengeTimeLimit/1000} seconds. Not started.`;
   }
 
-  // Function to update progress texts
   function updateDailyMissionProgress(amount) {
     dailyMissionProgress += amount;
     if (dailyMissionText) {
@@ -42,7 +37,6 @@
     }
   }
 
-  // Mini challenge
   function startMiniChallenge() {
     if (miniChallengeActive) return;
     miniChallengeActive = true;
@@ -64,8 +58,7 @@
     }, miniChallengeTimeLimit);
   }
 
-  // Hook into main brew function to track progress
-  const originalBrewClick = window.brewCoffeeClick;
+  const originalBrewCoffeeClick = window.brewCoffeeClick || function(amount){};
   window.brewCoffeeClick = function(amount) {
     updateDailyMissionProgress(amount);
     if (miniChallengeActive) {
@@ -82,13 +75,10 @@
         if (startMiniChallengeBtn) startMiniChallengeBtn.disabled = false;
       }
     }
-    if (originalBrewClick) originalBrewClick(amount);
+    originalBrewCoffeeClick(amount);
   };
 
-  // Public API to start mini challenge from button
   if (startMiniChallengeBtn) {
-    startMiniChallengeBtn.onclick = () => {
-      startMiniChallenge();
-    };
+    startMiniChallengeBtn.onclick = () => { startMiniChallenge(); };
   }
 })();
