@@ -2,24 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Buy Me A Coffee - Incremental Clicker</title>
+  <title>Cafe Clicker - Incremental Clicker</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div id="game-container">
-    <h1>☕ coffee.click ☕</h1>
+    <h1>☕ Cafe Clicker ☕</h1>
     <div class="info">
       <span><b>Coffees:</b> <span id="coffees">0</span></span> |
       <span><b>Per Click:</b> <span id="coffeePerClick">1</span></span> |
-      <span><b>Baristas:</b> <span id="baristas">0</span></span>
+      <span><b>Baristas:</b> <span id="baristas">0</span></span> |
+      <span><b>Trucks:</b> <span id="trucks">0</span></span>
     </div>
-    <button id="coffee-btn">Brew Coffee!</button>
+    <button id="coffee-btn">☕Brew Coffee!</button>
     <div class="shop">
       <h3>Shop Upgrades</h3>
       <button class="upgrade-btn" id="buyBaristaBtn">
         Hire Barista (<span id="baristaCost">50</span> coffees)
       </button>
       <span id="baristasOwned">0 owned</span><br />
+
+      <button class="upgrade-btn" id="buyTruckBtn">
+        Buy Coffee Truck (<span id="truckCost">500</span> coffees)
+      </button>
+      <span id="trucksOwned">0 owned</span><br />
+
+      <button class="upgrade-btn" id="buyEspressoMachineBtn">
+        Buy Espresso Machine (<span id="espressoCost">750</span> coffees)
+      </button>
+      <span id="espressoOwned">0 owned</span><br />
+
       <button class="upgrade-btn" id="buyUpgradeBtn">
         Upgrade Coffee Machine (<span id="upgradeCost">100</span> coffees)
       </button>
@@ -29,6 +41,8 @@
       <h3>Achievements</h3>
       <div id="achievement1" class="achievement">Brew 100 Coffees: <span>-</span></div>
       <div id="achievement2" class="achievement">Hire 5 Baristas: <span>-</span></div>
+      <div id="achievement3" class="achievement">Buy 3 Coffee Trucks: <span>-</span></div>
+      <div id="achievement4" class="achievement">Buy 2 Espresso Machines: <span>-</span></div>
     </div>
   </div>
   <script src="script.js"></script>
