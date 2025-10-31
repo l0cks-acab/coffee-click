@@ -34,39 +34,108 @@ body {
   color: var(--text);
   margin: 0;
   min-height: 100vh;
-  display: flex;
-  justify-content: center; /* Centers horizontally */
-  align-items: flex-start;  /* Align top to prevent clipping */
-  padding-top: 30px;        /* Adds breathing room on top */
+  padding: 30px;
   box-sizing: border-box;
 }
 
+/* Overall layout container */
+#overall-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  max-width: 1300px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
 
+/* Info panel */
+#info-panel {
+  background-color: var(--mantle);
+  color: var(--text);
+  width: 280px;
+  padding: 20px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  user-select: none;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+}
+
+#info-panel h2, #info-panel h3 {
+  color: var(--pink);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+#info-panel ul {
+  list-style: disc;
+  margin-left: 1.25em;
+  margin-bottom: 20px;
+}
+
+/* Main container housing game & brewing side panel */
+#main-container {
+  display: flex;
+  gap: 30px;
+  width: 100%;
+  max-width: 900px;
+}
+
+/* Game container on left-center */
 #game-container {
   background-color: var(--surface0);
   border-radius: 16px;
   padding: 30px 40px;
-  max-width: 420px;
+  max-width: 600px;
   width: 100%;
   box-shadow: 0 8px 20px rgba(0,0,0,0.7);
   text-align: center;
 }
 
-h1 {
-  color: var(--peach);
-  margin-bottom: 1rem;
+/* Brewing methods panel (right) */
+#brewing-container {
+  background-color: var(--surface1);
+  border-radius: 16px;
+  padding: 24px 28px;
+  width: 280px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  color: var(--text);
+  user-select: none;
+}
+
+#brewing-container h3 {
+  color: var(--pink);
   font-weight: 700;
-  font-size: 2.2rem;
+  margin-bottom: 15px;
+}
+
+/* Upgrade buttons styling */
+button.upgrade-btn {
+  padding: 10px 15px;
+  margin: 8px 0;
+  background-color: var(--surface1);
+  color: var(--text);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  width: 100%;
   user-select: none;
 }
 
-.info {
-  font-size: 1.2rem;
-  color: var(--subtext1);
-  margin-bottom: 1.5rem;
-  user-select: none;
+button.upgrade-btn:hover:not(:disabled) {
+  background-color: var(--lavender);
+  color: var(--crust);
+  box-shadow: 0 3px 12px var(--lavender);
 }
 
+button.upgrade-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Brew coffee button style */
 #coffee-btn {
   font-size: 1.5rem;
   padding: 16px 0;
@@ -80,6 +149,7 @@ h1 {
   transition: background-color 0.3s ease;
   box-shadow: 0 4px 12px var(--peach);
   user-select: none;
+  margin-bottom: 20px;
 }
 
 #coffee-btn:hover {
@@ -87,53 +157,14 @@ h1 {
   box-shadow: 0 6px 18px var(--yellow);
 }
 
-.shop, .achievements {
-  background-color: var(--mantle);
-  border-radius: 12px;
-  padding: 20px;
-  margin-top: 30px;
-  color: var(--subtext0);
+.info {
+  font-size: 1.1rem;
+  color: var(--subtext1);
+  margin-bottom: 1.5rem;
   user-select: none;
 }
 
-.shop h3, .achievements h3 {
-  color: var(--pink);
-  font-weight: 600;
-  margin-bottom: 1rem;
-}
-
-.upgrade-btn {
-  padding: 10px 15px;
-  margin: 8px 0;
-  background-color: var(--surface1);
-  color: var(--text);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 100%;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-  user-select: none;
-}
-
-.upgrade-btn:hover:not(:disabled) {
-  background-color: var(--lavender);
-  color: var(--crust);
-  box-shadow: 0 3px 12px var(--lavender);
-}
-
-.upgrade-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-#baristasOwned, #upgradeLevel {
-  display: inline-block;
-  margin-left: 12px;
-  color: var(--text);
-  font-weight: 500;
-}
-
+/* Achievement text */
 .achievement {
   margin: 8px 0;
   font-size: 1rem;
@@ -142,47 +173,4 @@ h1 {
 .ach-unlocked {
   color: var(--green);
   font-weight: 700;
-}
-/* Keep previous styles */
-
-/* Container for main game and brewing side panel */
-#main-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 30px;
-  padding-top: 30px;
-  min-height: 100vh;
-  box-sizing: border-box;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Game container (left panel) */
-#game-container {
-  background-color: var(--surface0);
-  border-radius: 16px;
-  padding: 30px 40px;
-  max-width: 600px;
-  width: 100%;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-  text-align: center;
-}
-
-/* Brewing methods panel on right */
-#brewing-container {
-  background-color: var(--surface1);
-  border-radius: 16px;
-  padding: 24px 28px;
-  width: 320px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-  color: var(--text);
-  user-select: none;
-}
-
-/* Style for buttons inside brewing container */
-#brewing-container button.upgrade-btn {
-  margin-bottom: 10px;
-  width: 100%;
-  font-weight: 600;
 }
