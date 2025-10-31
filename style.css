@@ -235,3 +235,20 @@ button.upgrade-btn:disabled {
   margin-top: 5px;
   user-select: none;
 }
+
+.emoji-particle {
+  position: fixed;
+  font-size: 24px;
+  pointer-events: none;
+  user-select: none;
+  animation: explode 700ms forwards ease-out;
+  will-change: transform, opacity;
+  z-index: 9999;
+}
+
+@keyframes explode {
+  to {
+    transform: translate(var(--dx), var(--dy)) scale(0);
+    opacity: 0;
+  }
+}
