@@ -25,8 +25,7 @@
       max-width: 280px;
     }
     #daily-mission-container,
-    #mini-challenge-container,
-    #brewing-container {
+    #mini-challenge-container {
       background-color: var(--mantle);
       color: var(--text);
       border-radius: 16px;
@@ -34,12 +33,12 @@
       padding: 20px;
       font-size: 0.9rem;
       display: inline-block;
+      text-align: center;
     }
   </style>
 </head>
 <body class="theme-mocha">
   <div id="overall-container" style="display: flex; gap: 30px;">
-
     <!-- Left info panel and side boxes -->
     <div style="display: flex; flex-direction: column; align-items: flex-start;">
       <div id="info-panel">
@@ -71,26 +70,6 @@
           <h3>Mini Challenge</h3>
           <p id="miniChallengeText">Loading...</p>
           <button class="upgrade-btn" id="startMiniChallengeBtn" style="width: 100%;">Start Mini Challenge</button>
-        </div>
-
-        <div id="brewing-container">
-          <h3>Brewing Methods</h3>
-          <div>
-            <button class="upgrade-btn" id="buyEspressoBtnRight">Buy Espresso Machine (Cost: <span id="espressoCostRight">1000</span>)</button>
-            Owned: <span id="espressoOwnedRight">0</span>, Passive Rate: <span id="espressoRateRight">0</span> coffees/sec
-          </div>
-          <div>
-            <button class="upgrade-btn" id="buyPourOverBtn">Buy Pour Over Setup (Cost: <span id="pourOverCost">2000</span>)</button>
-            Owned: <span id="pourOverOwnedRight">0</span>, Passive Rate: <span id="pourOverRateRight">0</span> coffees/sec
-          </div>
-          <div>
-            <button class="upgrade-btn" id="buyFilterBtn">Buy Filter Coffee Setup (Cost: <span id="filterCost">3500</span>)</button>
-            Owned: <span id="filterOwnedRight">0</span>, Passive Rate: <span id="filterRateRight">0</span> coffees/sec
-          </div>
-          <div>
-            <button class="upgrade-btn" id="buyColdBrewBtn">Buy Cold Brew Setup (Cost: <span id="coldBrewCost">5000</span>)</button>
-            Owned: <span id="coldBrewOwnedRight">0</span>, Passive Rate: <span id="coldBrewRateRight">0</span> coffees/sec
-          </div>
         </div>
       </div>
     </div>
@@ -125,11 +104,14 @@
           </ul>
         </div>
 
-        <div class="shop-container">
+        <div class="shop-container" style="margin-top: 20px;">
           <h3>Shop Upgrades</h3>
           <button class="upgrade-btn" id="buyBaristaBtn">Hire Barista (<span id="baristaCost">50</span> coffees)</button><br />
           <button class="upgrade-btn" id="buyTruckBtn">Buy Coffee Truck (<span id="truckCost">500</span> coffees)</button><br />
-          <button class="upgrade-btn" id="buyEspressoMachineBtn">Buy Espresso Machine (<span id="espressoCost">750</span>)</button><br />
+          <button class="upgrade-btn" id="buyEspressoMachineBtn">Buy Espresso Machine (<span id="espressoCost">1000</span>)</button><br />
+          <button class="upgrade-btn" id="buyPourOverBtn">Buy Pour Over Setup (<span id="pourOverCost">2000</span>)</button><br />
+          <button class="upgrade-btn" id="buyFilterBtn">Buy Filter Coffee Setup (<span id="filterCost">3500</span>)</button><br />
+          <button class="upgrade-btn" id="buyColdBrewBtn">Buy Cold Brew Setup (<span id="coldBrewCost">5000</span>)</button><br />
           <button class="upgrade-btn" id="marketingBtn">Marketing Material (<span id="marketingLevel">0</span>/10) - <span id="marketingCost">500</span> coffees</button><br />
           <button class="upgrade-btn" id="buyUpgradeBtn">Upgrade Coffee Machine (<span id="upgradeCost">100</span>)</button><br />
 
@@ -185,6 +167,7 @@
   <script src="addons.js"></script>
 
   <script>
+    // Achievements and Save/Load collapsible toggle
     document.getElementById('achievementsToggle').onclick = () => {
       const container = document.getElementById('achievements-container');
       const btn = document.getElementById('achievementsToggle');
