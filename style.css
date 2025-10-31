@@ -1,5 +1,5 @@
-/* Catppuccin pastel-inspired colors (Mocha variant warm tones) */
 :root {
+  /* Catppuccin Mocha colors */
   --rosewater: #f5e0dc;
   --flamingo: #f2cdcd;
   --pink: #f5c2e7;
@@ -35,10 +35,7 @@ body {
   margin: 0;
   min-height: 100vh;
   padding: 30px;
-  box-sizing: border-box;
 }
-
-/* Overall layout container */
 #overall-container {
   display: flex;
   justify-content: center;
@@ -46,10 +43,7 @@ body {
   gap: 30px;
   max-width: 1300px;
   margin: 0 auto;
-  box-sizing: border-box;
 }
-
-/* Info panel */
 #info-panel {
   background-color: var(--mantle);
   color: var(--text);
@@ -57,85 +51,50 @@ body {
   padding: 20px;
   border-radius: 16px;
   font-size: 0.9rem;
-  user-select: none;
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
 }
-
-#info-panel h2, #info-panel h3 {
-  color: var(--pink);
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-#info-panel ul {
-  list-style: disc;
-  margin-left: 1.25em;
-  margin-bottom: 20px;
-}
-
-/* Main container housing game & brewing side panel */
 #main-container {
   display: flex;
   gap: 30px;
   width: 100%;
   max-width: 900px;
 }
-
-/* Game container on left-center */
 #game-container {
   background-color: var(--surface0);
   border-radius: 16px;
   padding: 30px 40px;
-  max-width: 600px;
-  width: 100%;
+  flex: 1;
   box-shadow: 0 8px 20px rgba(0,0,0,0.7);
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-
-/* Brewing methods panel (right) */
 #brewing-container {
   background-color: var(--surface1);
   border-radius: 16px;
-  padding: 24px 28px;
+  padding: 24px;
   width: 280px;
+  flex-shrink: 0;
   box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-  color: var(--text);
-  user-select: none;
 }
-
-#brewing-container h3 {
-  color: var(--pink);
-  font-weight: 700;
-  margin-bottom: 15px;
-}
-
-/* Upgrade buttons styling */
 button.upgrade-btn {
-  padding: 10px 15px;
+  padding: 10px;
   margin: 8px 0;
-  background-color: var(--surface1);
-  color: var(--text);
+  width: 100%;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.3s ease;
-  width: 100%;
-  user-select: none;
+  transition: background-color 0.3s;
 }
-
-button.upgrade-btn:hover:not(:disabled) {
+button.upgrade-btn:hover:enabled {
   background-color: var(--lavender);
-  color: var(--crust);
-  box-shadow: 0 3px 12px var(--lavender);
+  box-shadow: 0 3px 12px rgba(127, 132, 156, 0.5);
 }
-
-button.upgrade-btn:disabled {
+button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
-
-/* Brew coffee button style */
 #coffee-btn {
   font-size: 1.5rem;
   padding: 16px 0;
@@ -146,30 +105,21 @@ button.upgrade-btn:disabled {
   cursor: pointer;
   width: 100%;
   font-weight: 600;
-  transition: background-color 0.3s ease;
   box-shadow: 0 4px 12px var(--peach);
-  user-select: none;
   margin-bottom: 20px;
+  transition: background-color 0.3s;
 }
-
 #coffee-btn:hover {
   background-color: var(--yellow);
   box-shadow: 0 6px 18px var(--yellow);
 }
-
 .info {
   font-size: 1.1rem;
-  color: var(--subtext1);
   margin-bottom: 1.5rem;
-  user-select: none;
 }
-
-/* Achievement text */
 .achievement {
   margin: 8px 0;
-  font-size: 1rem;
 }
-
 .ach-unlocked {
   color: var(--green);
   font-weight: 700;
