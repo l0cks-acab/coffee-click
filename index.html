@@ -1,123 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Cafe Clicker - Incremental Clicker</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8" />
+<title>Cafe Clicker - Incremental Clicker</title>
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="overall-container">
-    <!-- Left Info Panel -->
-    <div id="info-panel">
-      <h2>How to Play</h2>
-      <p>Click <b>"Brew Coffee!"</b> to make coffees manually. Buy upgrades to automate and boost your coffee production!</p>
+<div id="overall-container">
+  <!-- Left info panel -->
+  <div id="info-panel">
+    <h2>How to Play</h2>
+    <p>Click <b>"Brew Coffee!"</b> to make coffees manually. Buy upgrades to automate and boost production! Export or import your save data using the controls below.</p>
+    <h3>Items</h3>
+    <ul>
+      <li><b>Barista:</b> Automates 1 coffee/sec.</li>
+      <li><b>Coffee Truck:</b> Automates 2 coffees/sec.</li>
+      <li><b>Espresso Machine:</b> Increases coffee per click by 50% each owned.</li>
+      <li><b>Pour Over:</b> Passively brews 2.5 coffees/sec.</li>
+      <li><b>Filter:</b> Passively brews 4 coffees/sec.</li>
+      <li><b>Cold Brew:</b> Passively brews 6 coffees/sec.</li>
+    </ul>
+  </div>
 
-      <h3>Items</h3>
-      <ul>
-        <li><b>Barista:</b> Automatically brews 1 coffee per second.</li>
-        <li><b>Coffee Truck:</b> Automates 2 coffees per second.</li>
-        <li><b>Espresso Machine:</b> Increases coffee per click by 50% each owned.</li>
-        <li><b>Pour Over Setup:</b> Passively brews 2.5 coffees/sec.</li>
-        <li><b>Filter Setup:</b> Passively brews 4 coffees/sec.</li>
-        <li><b>Cold Brew Setup:</b> Passively brews 6 coffees/sec.</li>
-      </ul>
+  <!-- Main game and brewing methods -->
+  <div id="main-container">
+    <!-- Main game panel -->
+    <div id="game-container">
+      <h1>☕ Cafe Clicker ☕</h1>
+      <div class="info">
+        <span><b>Coffees:</b> <span id="coffees">0</span></span> |
+        <span><b>Per Click:</b> <span id="coffeePerClick">1</span></span> |
+        <span><b>Auto Click:</b> <span id="autoClick">0</span></span> |
+        <span><b>Cafe Points:</b> <span id="cafePoints">0</span></span>
+      </div>
+      <button id="coffee-btn">Brew Coffee!</button>
+      
+      <!-- Shop upgrades buttons -->
+      <div class="shop">
+        <h3>Shop Upgrades</h3>
+        <button class="upgrade-btn" id="buyBaristaBtn">
+          Hire Barista (<span id="baristaCost">50</span> coffees)
+        </button>
+        <span id="baristasOwned">0 owned</span><br />
+        <button class="upgrade-btn" id="buyTruckBtn">
+          Buy Coffee Truck (<span id="truckCost">500</span> coffees)
+        </button>
+        <span id="trucksOwned">0 owned</span><br />
+        <button class="upgrade-btn" id="buyEspressoMachineBtn">
+          Buy Espresso Machine (<span id="espressoCost">750</span>)
+        </button>
+        <span id="espressoOwned">0 owned</span><br />
+        <button class="upgrade-btn" id="buyUpgradeBtn">
+          Upgrade Coffee Machine (<span id="upgradeCost">100</span>)
+        </button>
+        <span id="upgradeLevel">Level 1</span>
+      </div>
 
-      <h3>Tips</h3>
-      <ul>
-        <li>Use Coffee Rush boost to temporarily double all production (cooldown 90s).</li>
-        <li>Prestige after 10,000 total coffees to earn Cafe Points for permanent boosts.</li>
-        <li>You can export and import your game save using the controls below.</li>
-      </ul>
-    </div>
+      <!-- Boost button -->
+      <div style="margin-top: 12px;">
+        <button class="upgrade-btn" id="boostBtn">Activate Coffee Rush (Cooldown)</button>
+      </div>
 
-    <!-- Main Game and Brewing Side by Side -->
-    <div id="main-container">
-      <div id="game-container">
-        <h1>☕ Cafe Clicker ☕</h1>
-        <div class="info">
-          <span><b>Coffees:</b> <span id="coffees">0</span></span> |
-          <span><b>Per Click:</b> <span id="coffeePerClick">1</span></span> |
-          <span><b>Auto Click:</b> <span id="autoClick">0</span></span> |
-          <span><b>Cafe Points:</b> <span id="cafePoints">0</span></span>
-        </div>
-        <button id="coffee-btn">Brew Coffee!</button>
-
-        <div class="shop">
-          <h3>Shop Upgrades</h3>
-          <button class="upgrade-btn" id="buyBaristaBtn">
-            Hire Barista (<span id="baristaCost">50</span> coffees)
-          </button>
-          <span id="baristasOwned">0 owned</span><br />
-
-          <button class="upgrade-btn" id="buyTruckBtn">
-            Buy Coffee Truck (<span id="truckCost">500</span> coffees)
-          </button>
-          <span id="trucksOwned">0 owned</span><br />
-
-          <button class="upgrade-btn" id="buyEspressoMachineBtn">
-            Buy Espresso Machine (<span id="espressoCost">750</span> coffees)
-          </button>
-          <span id="espressoOwned">0 owned</span><br />
-
-          <button class="upgrade-btn" id="buyUpgradeBtn">
-            Upgrade Coffee Machine (<span id="upgradeCost">100</span> coffees)
-          </button>
-          <span id="upgradeLevel">Level 1</span>
-        </div>
-
-        <div style="margin-top: 12px;">
-          <button class="upgrade-btn" id="boostBtn">Activate Coffee Rush (Cooldown)</button>
-        </div>
-
-        <div class="prestige" style="margin-top: 20px;">
-          <h3>Prestige</h3>
-          <div>
-            Cafe Points: <span id="cafePoints">0</span> |
-            <button class="upgrade-btn" id="prestigeBtn" disabled>Reset for Cafe Points</button>
-          </div>
-        </div>
-
-        <!-- Export/Import Controls -->
-        <div class="save-load-section" style="margin-top: 20px;">
-          <button class="upgrade-btn" id="exportBtn">Export Save</button>
-          <button class="upgrade-btn" id="importBtn">Import Save</button>
-          <textarea id="importExportArea" placeholder="Paste your save here to import" rows="3" style="width:100%; margin-top: 8px; font-family: monospace;"></textarea>
-        </div>
-
-        <div class="achievements" style="margin-top: 20px;">
-          <h3>Achievements</h3>
-          <div id="achievement1" class="achievement">Brew 100 Coffees: <span>-</span></div>
-          <div id="achievement2" class="achievement">Hire 5 Baristas: <span>-</span></div>
-          <div id="achievement3" class="achievement">Buy 3 Coffee Trucks: <span>-</span></div>
-          <div id="achievement4" class="achievement">Buy 2 Espresso Machines: <span>-</span></div>
-          <div id="achievement5" class="achievement">Activate Coffee Rush Boost: <span>-</span></div>
-          <div id="achievement6" class="achievement">Reach 10,000 Total Coffees Brewed: <span>-</span></div>
-          <div id="achievement7" class="achievement">Prestige for the first time: <span>-</span></div>
-          <div id="achievement8" class="achievement">Unlock all Brewing Methods: <span>-</span></div>
+      <!-- Prestige system -->
+      <div class="prestige" style="margin-top: 20px;">
+        <h3>Prestige</h3>
+        <div>
+          Cafe Points: <span id="cafePoints">0</span> |
+          <button class="upgrade-btn" id="prestigeBtn" disabled>Reset for Cafe Points</button>
         </div>
       </div>
 
-      <div id="brewing-container">
-        <h3>Brewing Methods</h3>
-        <div>
-          <button class="upgrade-btn" id="buyEspressoBtnRight">Buy Espresso Machine (Cost: <span id="espressoCostRight">1000</span>)</button>
-          Owned: <span id="espressoOwnedRight">0</span>, Passive Rate: <span id="espressoRate">0</span> coffees/sec
-        </div>
-        <div>
-          <button class="upgrade-btn" id="buyPourOverBtn">Buy Pour Over Setup (Cost: <span id="pourOverCost">2000</span>)</button>
-          Owned: <span id="pourOverOwned">0</span>, Passive Rate: <span id="pourOverRate">0</span> coffees/sec
-        </div>
-        <div>
-          <button class="upgrade-btn" id="buyFilterBtn">Buy Filter Coffee Setup (Cost: <span id="filterCost">3500</span>)</button>
-          Owned: <span id="filterOwned">0</span>, Passive Rate: <span id="filterRate">0</span> coffees/sec
-        </div>
-        <div>
-          <button class="upgrade-btn" id="buyColdBrewBtn">Buy Cold Brew Setup (Cost: <span id="coldBrewCost">5000</span>)</button>
-          Owned: <span id="coldBrewOwned">0</span>, Passive Rate: <span id="coldBrewRate">0</span> coffees/sec
-        </div>
+      <!-- Export/Import save -->
+      <div class="save-load-section" style="margin-top:20px;">
+        <button class="upgrade-btn" id="exportBtn">Export Save</button>
+        <button class="upgrade-btn" id="importBtn">Import Save</button>
+        <textarea id="importExportArea" placeholder="Paste save data here" rows="3" style="width: 100%; margin-top:8px; font-family: monospace;"></textarea>
+      </div>
+
+      <!-- Achievements -->
+      <div class="achievements" style="margin-top:20px;">
+        <h3>Achievements</h3>
+        <div id="achievement1" class="achievement">Brew 100 Coffees: <span>-</span></div>
+        <div id="achievement2" class="achievement">Hire 5 Baristas: <span>-</span></div>
+        <div id="achievement3" class="achievement">Buy 3 Coffee Trucks: <span>-</span></div>
+        <div id="achievement4" class="achievement">Buy 2 Espresso Machines: <span>-</span></div>
+        <div id="achievement5" class="achievement">Activate Coffee Rush Boost: <span>-</span></div>
+        <div id="achievement6" class="achievement">Reach 10,000 Total Coffees Brewed: <span>-</span></div>
+        <div id="achievement7" class="achievement">Prestige for the first time: <span>-</span></div>
+        <div id="achievement8" class="achievement">Unlock all Brewing Methods: <span>-</span></div>
+      </div>
+    </div>
+
+    <!-- Brewing methods panel -->
+    <div id="brewing-container">
+      <h3>Brewing Methods</h3>
+      <div>
+        <button class="upgrade-btn" id="buyEspressoBtnRight">Buy Espresso Machine (Cost: <span id="espressoCostRight">1000</span>)</button>
+        Owned: <span id="espressoOwnedRight">0</span>, Passive Rate: <span id="espressoRate">0</span> coffees/sec
+      </div>
+      <div>
+        <button class="upgrade-btn" id="buyPourOverBtn">Buy Pour Over Setup (Cost: <span id="pourOverCost">2000</span>)</button>
+        Owned: <span id="pourOverOwned">0</span>, Passive Rate: <span id="pourOverRate">0</span> coffees/sec
+      </div>
+      <div>
+        <button class="upgrade-btn" id="buyFilterBtn">Buy Filter Coffee Setup (Cost: <span id="filterCost">3500</span>)</button>
+        Owned: <span id="filterOwned">0</span>, Passive Rate: <span id="filterRate">0</span> coffees/sec
+      </div>
+      <div>
+        <button class="upgrade-btn" id="buyColdBrewBtn">Buy Cold Brew Setup (Cost: <span id="coldBrewCost">5000</span>)</button>
+        Owned: <span id="coldBrewOwned">0</span>, Passive Rate: <span id="coldBrewRate">0</span> coffees/sec
       </div>
     </div>
   </div>
-  <script src="script.js"></script>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
