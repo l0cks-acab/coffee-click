@@ -33,13 +33,14 @@ body {
   background-color: var(--base);
   color: var(--text);
   margin: 0;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   justify-content: center; /* Centers horizontally */
-  align-items: center;     /* Centers vertically */
-  padding: 20px;
+  align-items: flex-start;  /* Align top to prevent clipping */
+  padding-top: 30px;        /* Adds breathing room on top */
   box-sizing: border-box;
 }
+
 
 #game-container {
   background-color: var(--surface0);
