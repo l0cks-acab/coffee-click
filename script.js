@@ -275,12 +275,287 @@ document.addEventListener('DOMContentLoaded', () => {
     updateDisplay();
   };
 
-  // Purchase handlers as previously described...
-  // Automation toggles and auto-buy setup...
-  // Export/import handlers...
-  // Prestige and boost handlers...
+  // Purchase handlers
+  document.getElementById('buyBaristaBtn').onclick = () => {
+    const cost = getReducedCost(baristaCost);
+    if (coffees >= cost) {
+      coffees -= cost;
+      baristas++;
+      baristaCost = Math.floor(baristaCost * 1.55);
+      updateDisplay();
+    }
+  };
 
-  // Passive coffee generation every second
+  document.getElementById('buyTruckBtn').onclick = () => {
+    const cost = getReducedCost(truckCost);
+    if (coffees >= cost) {
+      coffees -= cost;
+      trucks++;
+      truckCost = Math.floor(truckCost * 1.6);
+      updateDisplay();
+    }
+  };
+
+  document.getElementById('buyEspressoMachineBtn').onclick = () => {
+    const cost = getReducedCost(espressoCost);
+    if (coffees >= cost) {
+      coffees -= cost;
+      espressoMachines++;
+      espressoCost = Math.floor(espressoCost * 1.75);
+      updateDisplay();
+    }
+  };
+
+  document.getElementById('buyPourOverBtn').onclick = () => {
+    const cost = getReducedCost(pourOverCost);
+    if (coffees >= cost) {
+      coffees -= cost;
+      pourOverSetups++;
+      pourOverCost = Math.floor(pourOverCost * 1.75);
+      updateDisplay();
+    }
+  };
+
+  document.getElementById('buyFilterBtn').onclick = () => {
+    const cost = getReducedCost(filterCost);
+    if (coffees >= cost) {
+      coffees -= cost;
+      filterSetups++;
+      filterCost = Math.floor(filterCost * 1.8);
+      updateDisplay();
+    }
+  };
+
+  document.getElementById('buyColdBrewBtn').onclick = () => {
+    const cost = getReducedCost(coldBrewCost);
+    if (coffees >= cost) {
+      coffees -= cost;
+      coldBrewSetups++;
+      coldBrewCost = Math.floor(coldBrewCost * 1.8);
+      updateDisplay();
+    }
+  };
+
+  document.getElementById('buyUpgradeBtn').onclick = () => {
+    const cost = getReducedCost(upgradeCost);
+    if (coffees >= cost) {
+      coffees -= cost;
+      upgradeLevel++;
+      coffeePerClick += upgradeLevel;
+      upgradeCost = Math.floor(upgradeCost * 2.2);
+      updateDisplay();
+    }
+  };
+
+  document.getElementById('marketingBtn').onclick = () => {
+    const cost = getReducedCost(marketingCost);
+    if (coffees >= cost && marketingLevel < marketingMaxLevel) {
+      coffees -= cost;
+      marketingLevel++;
+      marketingCost = Math.floor(marketingCost * 1.7);
+      updateDisplay();
+    }
+  };
+
+  // Prestige shop buy handlers
+  document.getElementById('buyProdBoostBtn').onclick = () => {
+    if (cafePoints >= prodBoostCost) {
+      cafePoints -= prodBoostCost;
+      prodBoostCount++;
+      prodBoostCost = Math.ceil(prodBoostCost * 1.7);
+      updateDisplay();
+    }
+  };
+
+  document.getElementById('buyCostReduceBtn').onclick = () => {
+    if (cafePoints >= costReduceCost) {
+      cafePoints -= costReduceCost;
+      costReduceCount++;
+      costReduceCost = Math.ceil(costReduceCost * 1.7);
+      updateDisplay();
+    }
+  };
+
+  document.getElementById('buyAutomationUnlockBtn').onclick = () => {
+    if (cafePoints >= automationUnlockCost && automationUnlockCount < 1) {
+      cafePoints -= automationUnlockCost;
+      automationUnlockCount = 1;
+      updateDisplay();
+    }
+  };
+
+  // Automation toggles listeners
+  for (const key of ['Barista', 'Truck', 'Espresso', 'PourOver', 'Filter', 'ColdBrew']) {
+    const el = document.getElementById('auto' + key);
+    if (el) {
+      el.addEventListener('change', () => {
+        automationEnabled[key.toLowerCase()] = el.checked;
+      });
+    }
+  }
+
+  // Auto-buy interval every second
+  setInterval(() => {
+    if (automationUnlockCount < 1) return;
+    if (automationEnabled.baristas) tryBuy('buyBaristaBtn', baristaCost);
+    if (automationEnabled.trucks) tryBuy('buyTruckBtn', truckCost);
+    if (automationEnabled.espresso) tryBuy('buyEspressoMachineBtn', espressoCost);
+    if (automationEnabled.pourOver) tryBuy('buyPourOverBtn', pourOverCost);
+    if (automationEnabled.filter) tryBuy('buyFilterBtn', filterCost);
+    if (automationEnabled.coldBrew) tryBuy('buyColdBrewBtn', coldBrewCost);
+  }, 1000);
+
+  function tryBuy(buttonId, baseCost) {
+    const cost = getReducedCost(baseCost);
+    const btn = document.getElementById(buttonId);
+    if (!btn || btn.disabled || coffees < cost) return;
+    btn.click();
+  }
+
+  // Boost button handler
+  document.getElementById('boostBtn').onclick = () => {
+    if (!boostReady) return;
+    boostActive = true;
+    updateDisplay();
+    startBoostCooldown();
+    setTimeout(() => {
+      boostActive = false;
+      updateDisplay();
+    }, boostDuration);
+  };
+
+  // Prestige button handler
+  document.getElementById('prestigeBtn').onclick = () => {
+    if (totalCoffeesBrewed >= 10000) {
+      const pointsGained = Math.floor(Math.sqrt(totalCoffeesBrewed / 1000));
+      cafePoints += pointsGained;
+      cafePointMultiplier = 1 + cafePoints * 0.1;
+
+      coffees = 0;
+      totalCoffeesBrewed = 0;
+      coffeePerClick = 1;
+      upgradeLevel = 1;
+
+      baristas = 0;
+      baristaCost = 50;
+
+      trucks = 0;
+      truckCost = 500;
+
+      espressoCost = 1000;
+      pourOverCost = 2000;
+      filterCost = 3500;
+      coldBrewCost = 5000;
+
+      upgradeCost = 100;
+
+      marketingCost = 500;
+
+      updateDisplay();
+    }
+  };
+
+  // Export save
+  function exportSave() {
+    const saveData = {
+      coffees,
+      totalCoffeesBrewed,
+      coffeePerClick,
+      upgradeLevel,
+      baristas,
+      baristaCost,
+      trucks,
+      truckCost,
+      espressoMachines,
+      espressoCost,
+      pourOverSetups,
+      pourOverCost,
+      filterSetups,
+      filterCost,
+      coldBrewSetups,
+      coldBrewCost,
+      upgradeCost,
+      cafePoints,
+      marketingLevel,
+      marketingCost,
+      achievements,
+      prodBoostCount,
+      prodBoostCost,
+      costReduceCount,
+      costReduceCost,
+      automationUnlockCount,
+      automationUnlockCost,
+      automationEnabled
+    };
+    return btoa(encodeURIComponent(JSON.stringify(saveData)));
+  }
+
+  // Import save
+  function importSave(encodedStr) {
+    try {
+      const decoded = decodeURIComponent(atob(encodedStr));
+      const data = JSON.parse(decoded);
+
+      coffees = data.coffees ?? coffees;
+      totalCoffeesBrewed = data.totalCoffeesBrewed ?? totalCoffeesBrewed;
+      coffeePerClick = data.coffeePerClick ?? coffeePerClick;
+      upgradeLevel = data.upgradeLevel ?? upgradeLevel;
+      baristas = data.baristas ?? baristas;
+      baristaCost = data.baristaCost ?? baristaCost;
+      trucks = data.trucks ?? trucks;
+      truckCost = data.truckCost ?? truckCost;
+      espressoMachines = data.espressoMachines ?? espressoMachines;
+      espressoCost = data.espressoCost ?? espressoCost;
+      pourOverSetups = data.pourOverSetups ?? pourOverSetups;
+      pourOverCost = data.pourOverCost ?? pourOverCost;
+      filterSetups = data.filterSetups ?? filterSetups;
+      filterCost = data.filterCost ?? filterCost;
+      coldBrewSetups = data.coldBrewSetups ?? coldBrewSetups;
+      coldBrewCost = data.coldBrewCost ?? coldBrewCost;
+      upgradeCost = data.upgradeCost ?? upgradeCost;
+      cafePoints = data.cafePoints ?? cafePoints;
+      marketingLevel = data.marketingLevel ?? marketingLevel;
+      marketingCost = data.marketingCost ?? marketingCost;
+      achievements = data.achievements ?? achievements;
+
+      prodBoostCount = data.prodBoostCount ?? prodBoostCount;
+      prodBoostCost = data.prodBoostCost ?? prodBoostCost;
+      costReduceCount = data.costReduceCount ?? costReduceCount;
+      costReduceCost = data.costReduceCost ?? costReduceCost;
+      automationUnlockCount = data.automationUnlockCount ?? automationUnlockCount;
+      automationUnlockCost = data.automationUnlockCost ?? automationUnlockCost;
+      automationEnabled = data.automationEnabled ?? automationEnabled;
+
+      cafePointMultiplier = 1 + cafePoints * 0.1;
+
+      updateDisplay();
+      alert('Save imported successfully!');
+    } catch {
+      alert('Invalid save data! Please check your input.');
+    }
+  }
+
+  document.getElementById('exportBtn').onclick = () => {
+    const saveHash = exportSave();
+    const textarea = document.getElementById('importExportArea');
+    textarea.value = saveHash;
+    textarea.select();
+    document.execCommand('copy');
+    alert('Save exported and copied to clipboard.');
+  };
+
+  document.getElementById('importBtn').onclick = () => {
+    const val = document.getElementById('importExportArea').value.trim();
+    if (val.length > 0) {
+      importSave(val);
+    } else {
+      alert('Please paste your save data into the text box to import.');
+    }
+  };
+
+  updateDisplay();
+
+  // Passive coffee generation per second
   setInterval(() => {
     let passive =
       baristas * 1 +
@@ -294,6 +569,4 @@ document.addEventListener('DOMContentLoaded', () => {
     totalCoffeesBrewed += passive;
     updateDisplay();
   }, 1000);
-
-  updateDisplay();
 });
