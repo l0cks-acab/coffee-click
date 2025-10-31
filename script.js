@@ -230,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (boostBtnEl) { boostBtnEl.disabled = true; boostBtnEl.textContent = 'Coffee Rush (Cooldown)'; }
         if (boostTimerEl) boostTimerEl.textContent = 'Cooldown: ' + formatTime(boostCooldownRemaining);
       }
+      
     } catch (e) {
       console.error('updateDisplay error:', e);
     }
@@ -263,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Expose brewCoffeeClick globally to allow addons to hook in
+  // Expose brewCoffeeClick globally to allow addons to hook it
   window.brewCoffeeClick = (amount) => {
     coffees += amount;
     totalCoffeesBrewed += amount;
