@@ -41,10 +41,10 @@
           <ul>
             <li>Baristas: <span id="baristasOwned">0 owned</span></li>
             <li>Coffee Trucks: <span id="trucksOwned">0 owned</span></li>
-            <li>Espresso Machines: <span id="espressoOwned">0 owned</span></li>
-            <li>Pour Over Setups: <span id="pourOverOwned">0 owned</span></li>
-            <li>Filter Setups: <span id="filterOwned">0 owned</span></li>
-            <li>Cold Brew Setups: <span id="coldBrewOwned">0 owned</span></li>
+            <li>Espresso Machines: <span id="espressoOwned">0 owned</span>, Passive Rate: <span id="espressoRate">0</span> coffees/sec</li>
+            <li>Pour Over Setups: <span id="pourOverOwned">0 owned</span>, Passive Rate: <span id="pourOverRate">0</span> coffees/sec</li>
+            <li>Filter Setups: <span id="filterOwned">0 owned</span>, Passive Rate: <span id="filterRate">0</span> coffees/sec</li>
+            <li>Cold Brew Setups: <span id="coldBrewOwned">0 owned</span>, Passive Rate: <span id="coldBrewRate">0</span> coffees/sec</li>
           </ul>
         </div>
 
@@ -55,14 +55,13 @@
           <button class="upgrade-btn" id="buyEspressoMachineBtn">Buy Espresso Machine (<span id="espressoCost">750</span>)</button><br />
           <button class="upgrade-btn" id="marketingBtn">Marketing Material (<span id="marketingLevel">0</span>/10) - <span id="marketingCost">500</span> coffees</button><br />
           <button class="upgrade-btn" id="buyUpgradeBtn">Upgrade Coffee Machine (<span id="upgradeCost">100</span>)</button><br />
-        </div>
-         <!-- Prestige shop buttons -->
+
           <h3 style="margin-top: 20px;">Prestige Shop - Spend Cafe Points</h3>
-        
+
           <button class="upgrade-btn" id="buyProdBoostBtn">Buy +1% Production Boost (Cost: <span id="prodBoostCost">1</span> CP)</button><br />
           <button class="upgrade-btn" id="buyCostReduceBtn">Buy -2% Cost Reduction (Cost: <span id="costReduceCost">1</span> CP)</button><br />
           <button class="upgrade-btn" id="buyAutomationUnlockBtn">Buy Automation Unlock (Cost: <span id="automationUnlockCost">3</span> CP)</button><br />
-        
+
           <div id="automation-toggles" style="margin-top:10px; display:none;">
             <h4>Automation Settings</h4>
             <label><input type="checkbox" id="autoBarista" /> Auto buy Baristas</label><br />
@@ -72,6 +71,8 @@
             <label><input type="checkbox" id="autoFilter" /> Auto buy Filter</label><br />
             <label><input type="checkbox" id="autoColdBrew" /> Auto buy Cold Brew</label>
           </div>
+        </div>
+
         <div class="boost-marketing-container">
           <button class="upgrade-btn" id="boostBtn">Activate Coffee Rush (Ready)</button>
           <div id="boostTimer" style="margin-top:5px; color: var(--yellow); font-weight:600;">Cooldown: 00:00</div>
@@ -102,26 +103,6 @@
       </div>
 
       <div id="right-panel">
-        <div id="brewing-container">
-          <h3>Brewing Methods</h3>
-          <div>
-            <button class="upgrade-btn" id="buyEspressoBtnRight">Buy Espresso Machine (Cost: <span id="espressoCostRight">1000</span>)</button>
-            Owned: <span id="espressoOwnedRight">0</span>, Passive Rate: <span id="espressoRate">0</span> coffees/sec
-          </div>
-          <div>
-            <button class="upgrade-btn" id="buyPourOverBtn">Buy Pour Over Setup (Cost: <span id="pourOverCost">2000</span>)</button>
-            Owned: <span id="pourOverOwned">0</span>, Passive Rate: <span id="pourOverRate">0</span> coffees/sec
-          </div>
-          <div>
-            <button class="upgrade-btn" id="buyFilterBtn">Buy Filter Coffee Setup (Cost: <span id="filterCost">3500</span>)</button>
-            Owned: <span id="filterOwned">0</span>, Passive Rate: <span id="filterRate">0</span> coffees/sec
-          </div>
-          <div>
-            <button class="upgrade-btn" id="buyColdBrewBtn">Buy Cold Brew Setup (Cost: <span id="coldBrewCost">5000</span>)</button>
-            Owned: <span id="coldBrewOwned">0</span>, Passive Rate: <span id="coldBrewRate">0</span> coffees/sec
-          </div>
-        </div>
-
         <div id="save-load-container" style="margin-top: 20px;">
           <h3>Save / Load</h3>
           <button class="upgrade-btn" id="exportBtn">Export Save</button>
