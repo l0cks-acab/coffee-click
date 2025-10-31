@@ -25,7 +25,6 @@
         <li><b>Filter Setup:</b> Passively brews 4 coffees/sec.</li>
         <li><b>Cold Brew Setup:</b> Passively brews 6 coffees/sec.</li>
       </ul>
-      <button class="upgrade-btn" id="themeSwitchBtn" style="margin-top: 12px; width: 100%;">Change Theme</button>
     </div>
 
     <!-- Main content -->
@@ -90,7 +89,7 @@
             <button class="upgrade-btn" id="prestigeBtn" disabled>Reset for Cafe Points</button>
           </div>
 
-          <button class="toggle-btn" id="achievementsToggle" style="margin-top:12px;">Show Achievements ▼</button>
+          <button class="toggle-btn" id="achievementsToggle" style="margin-top:12px;">Achievements / Game File Management ▼</button>
           <div id="achievements-container" class="collapsed" style="margin-top:10px;">
             <h3>Achievements</h3>
             <div id="achievement1" class="achievement">Brew 100 Coffees: <span>-</span></div>
@@ -102,11 +101,8 @@
             <div id="achievement7" class="achievement">Prestige for the first time: <span>-</span></div>
             <div id="achievement8" class="achievement">Unlock all Brewing Methods: <span>-</span></div>
 
-            <!-- Save / Load collapsible container below achievements -->
-            <button class="toggle-btn" id="saveLoadToggle" style="margin-top: 12px; width: 100%; text-align: left;">
-              Show Save/Load ▼
-            </button>
-            <div id="save-load-container" class="collapsed" style="margin-top: 10px;">
+            <!-- Embedded Save / Load inside achievements -->
+            <div id="save-load-container" style="margin-top:20px;">
               <h3>Save / Load</h3>
               <button class="upgrade-btn" id="exportBtn">Export Save</button>
               <button class="upgrade-btn" id="importBtn">Import Save</button>
@@ -136,8 +132,6 @@
             Owned: <span id="coldBrewOwnedRight">0</span>, Passive Rate: <span id="coldBrewRateRight">0</span> coffees/sec
           </div>
         </div>
-
-        <!-- Save/Load container moved below achievements, so remove from here -->
       </div>
     </div>
   </div>
@@ -145,27 +139,16 @@
   <script src="script.js"></script>
 
   <script>
+    // Achievements and Save/Load collapsible toggle
     document.getElementById('achievementsToggle').onclick = () => {
       const container = document.getElementById('achievements-container');
       const btn = document.getElementById('achievementsToggle');
       if (container.classList.contains('collapsed')) {
         container.classList.remove('collapsed');
-        btn.textContent = 'Hide Achievements ▲';
+        btn.textContent = 'Achievements / Game File Management ▲';
       } else {
         container.classList.add('collapsed');
-        btn.textContent = 'Show Achievements ▼';
-      }
-    };
-
-    document.getElementById('saveLoadToggle').onclick = () => {
-      const container = document.getElementById('save-load-container');
-      const btn = document.getElementById('saveLoadToggle');
-      if (container.classList.contains('collapsed')) {
-        container.classList.remove('collapsed');
-        btn.textContent = 'Hide Save/Load ▲';
-      } else {
-        container.classList.add('collapsed');
-        btn.textContent = 'Show Save/Load ▼';
+        btn.textContent = 'Achievements / Game File Management ▼';
       }
     };
   </script>
