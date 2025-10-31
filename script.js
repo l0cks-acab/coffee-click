@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let boostCooldown = baseBoostCooldown;
   let boostCooldownRemaining = 0;
   let boostReady = true;
-  const boostDuration = 30000; // 30 seconds
+  const boostDuration = 30000;
 
   let boostTimerInterval = null;
 
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function startBoostCooldown() {
     boostReady = false;
     boostCooldown = baseBoostCooldown - marketingLevel * 15000;
-    if (boostCooldown < 60000) boostCooldown = 60000; // minimum cooldown 60s
+    if (boostCooldown < 60000) boostCooldown = 60000; 
     boostCooldownRemaining = boostCooldown;
     updateDisplay();
 
@@ -114,20 +114,17 @@ document.addEventListener('DOMContentLoaded', () => {
       safeSetText('baristasOwned', `${baristas} owned`);
       safeSetText('trucksOwned', `${trucks} owned`);
       safeSetText('espressoOwned', `${espressoMachines} owned`);
-      safeSetText('espressoOwnedRight', `${espressoMachines} owned`);
-      safeSetText('pourOverOwned', `${pourOverSetups} owned`);
-      safeSetText('filterOwned', `${filterSetups} owned`);
-      safeSetText('coldBrewOwned', `${coldBrewSetups} owned`);
-
       safeSetText('espressoRate', (espressoMachines * brewingPassiveRates.espresso * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1));
+      safeSetText('pourOverOwned', `${pourOverSetups} owned`);
       safeSetText('pourOverRate', (pourOverSetups * brewingPassiveRates.pourOver * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1));
+      safeSetText('filterOwned', `${filterSetups} owned`);
       safeSetText('filterRate', (filterSetups * brewingPassiveRates.filter * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1));
+      safeSetText('coldBrewOwned', `${coldBrewSetups} owned`);
       safeSetText('coldBrewRate', (coldBrewSetups * brewingPassiveRates.coldBrew * cafePointMultiplier * (boostActive ? 2 : 1)).toFixed(1));
 
       safeSetText('baristaCost', baristaCost);
       safeSetText('truckCost', truckCost);
       safeSetText('espressoCost', espressoCost);
-      safeSetText('espressoCostRight', espressoCost);
       safeSetText('pourOverCost', pourOverCost);
       safeSetText('filterCost', filterCost);
       safeSetText('coldBrewCost', coldBrewCost);
@@ -175,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (document.getElementById('buyBaristaBtn')) document.getElementById('buyBaristaBtn').disabled = coffees < baristaCost;
       if (document.getElementById('buyTruckBtn')) document.getElementById('buyTruckBtn').disabled = coffees < truckCost;
       if (document.getElementById('buyEspressoMachineBtn')) document.getElementById('buyEspressoMachineBtn').disabled = coffees < espressoCost;
-      if (document.getElementById('buyEspressoBtnRight')) document.getElementById('buyEspressoBtnRight').disabled = coffees < espressoCost;
       if (document.getElementById('buyPourOverBtn')) document.getElementById('buyPourOverBtn').disabled = coffees < pourOverCost;
       if (document.getElementById('buyFilterBtn')) document.getElementById('buyFilterBtn').disabled = coffees < filterCost;
       if (document.getElementById('buyColdBrewBtn')) document.getElementById('buyColdBrewBtn').disabled = coffees < coldBrewCost;
@@ -237,16 +233,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  function buyEspresso() {
+  document.getElementById('buyEspressoMachineBtn').onclick = () => {
     if (coffees >= espressoCost) {
       coffees -= espressoCost;
       espressoMachines++;
       espressoCost = Math.floor(espressoCost * 1.75);
       updateDisplay();
     }
-  }
-  document.getElementById('buyEspressoMachineBtn').onclick = buyEspresso;
-  document.getElementById('buyEspressoBtnRight').onclick = buyEspresso;
+  };
 
   document.getElementById('buyPourOverBtn').onclick = () => {
     if (coffees >= pourOverCost) {
@@ -311,7 +305,6 @@ document.addEventListener('DOMContentLoaded', () => {
       trucks = 0;
       truckCost = 500;
 
-      // Brewing methods persist through prestige
       espressoCost = 1000;
       pourOverCost = 2000;
       filterCost = 3500;
@@ -320,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
       upgradeCost = 100;
 
       marketingCost = 500;
-      // marketingLevel persists
+      // Marketing level persists
 
       updateDisplay();
     }
@@ -339,12 +332,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setInterval(() => {
     let passive =
-      (baristas * 1) +
-      (trucks * 2) +
-      (espressoMachines * brewingPassiveRates.espresso) +
-      (pourOverSetups * brewingPassiveRates.pourOver) +
-      (filterSetups * brewingPassiveRates.filter) +
-      (coldBrewSetups * brewingPassiveRates.coldBrew);
+      baristas * 1 +
+      trucks * 2 +
+      espressoMachines * brewingPassiveRates.espresso +
+      pourOverSetups * brewingPassiveRates.pourOver +
+      filterSetups * brewingPassiveRates.filter +
+      coldBrewSetups * brewingPassiveRates.coldBrew;
     passive *= cafePointMultiplier * (boostActive ? 2 : 1);
     coffees += passive;
     totalCoffeesBrewed += passive;
@@ -443,6 +436,98 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent = 'Show Achievements ▼';
     }
   };
+
+  // Theme switching
+  const themes = ['mocha', 'latte', 'frappe', 'macchiato', 'rosewater'];
+  let currentThemeIndex = 0;
+
+  const catppuccinThemes = {
+    mocha: {
+      '--base': '#1e1e2e',
+      '--mantle': '#181825',
+      '--crust': '#11111b',
+      '--text': '#cdd6f4',
+      '--surface0': '#313244',
+      '--surface1': '#45475a',
+      '--surface2': '#585b70',
+      '--pink': '#f5c2e7',
+      '--yellow': '#f9e2af',
+      '--green': '#a6e3a1',
+      '--peach': '#fab387',
+      '--lavender': '#b4befe',
+    },
+    latte: {
+      '--base': '#eff1f5',
+      '--mantle': '#e6e9ef',
+      '--crust': '#dce0e8',
+      '--text': '#4c4f69',
+      '--surface0': '#dce0e8',
+      '--surface1': '#cad0e7',
+      '--surface2': '#b5bfe2',
+      '--pink': '#c59ae7',
+      '--yellow': '#df8e1d',
+      '--green': '#40a02b',
+      '--peach': '#d7827e',
+      '--lavender': '#7287fd',
+    },
+    frappe: {
+      '--base': '#303446',
+      '--mantle': '#292c3c',
+      '--crust': '#232634',
+      '--text': '#c6d0f5',
+      '--surface0': '#4c4f69',
+      '--surface1': '#585b70',
+      '--surface2': '#767aa9',
+      '--pink': '#f2cdcd',
+      '--yellow': '#e5c890',
+      '--green': '#a6d189',
+      '--peach': '#eebebe',
+      '--lavender': '#babbf1',
+    },
+    macchiato: {
+      '--base': '#24273a',
+      '--mantle': '#1e2030',
+      '--crust': '#181926',
+      '--text': '#cad3f5',
+      '--surface0': '#363a4f',
+      '--surface1': '#494d64',
+      '--surface2': '#5b6078',
+      '--pink': '#f4b8e4',
+      '--yellow': '#eed49f',
+      '--green': '#a6da95',
+      '--peach': '#f4dbd6',
+      '--lavender': '#b7bdf8',
+    },
+    rosewater: {
+      '--base': '#f5e0dc',
+      '--mantle': '#f2d5cf',
+      '--crust': '#ddb6c6',
+      '--text': '#6c6783',
+      '--surface0': '#c4a7e7',
+      '--surface1': '#988ba2',
+      '--surface2': '#6e6a86',
+      '--pink': '#ea76cb',
+      '--yellow': '#ef9f76',
+      '--green': '#40a02b',
+      '--peach': '#bc6f3c',
+      '--lavender': '#9d7cd8',
+    }
+  };
+
+  function applyTheme(themeName) {
+    const theme = catppuccinThemes[themeName];
+    if (!theme) return;
+    for (const [varName, color] of Object.entries(theme)) {
+      document.documentElement.style.setProperty(varName, color);
+    }
+  }
+
+  document.getElementById('themeSwitchBtn').onclick = () => {
+    currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+    applyTheme(themes[currentThemeIndex]);
+  };
+
+  applyTheme(themes[currentThemeIndex]);
 
   updateDisplay();
 });
