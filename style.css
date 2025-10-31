@@ -143,3 +143,46 @@ h1 {
   color: var(--green);
   font-weight: 700;
 }
+/* Keep previous styles */
+
+/* Container for main game and brewing side panel */
+#main-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  padding-top: 30px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Game container (left panel) */
+#game-container {
+  background-color: var(--surface0);
+  border-radius: 16px;
+  padding: 30px 40px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+  text-align: center;
+}
+
+/* Brewing methods panel on right */
+#brewing-container {
+  background-color: var(--surface1);
+  border-radius: 16px;
+  padding: 24px 28px;
+  width: 320px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  color: var(--text);
+  user-select: none;
+}
+
+/* Style for buttons inside brewing container */
+#brewing-container button.upgrade-btn {
+  margin-bottom: 10px;
+  width: 100%;
+  font-weight: 600;
+}
