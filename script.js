@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let boostTimerInterval = null;
 
+
+
   let prodBoostCount = 0;
   let prodBoostCost = 1;
 
@@ -264,6 +266,25 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('buyProdBoostBtn').disabled = cafePoints < prodBoostCost;
     document.getElementById('buyCostReduceBtn').disabled = cafePoints < costReduceCost;
     document.getElementById('buyAutomationUnlockBtn').disabled = cafePoints < automationUnlockCost || automationUnlockCount > 0;
+    
+    // Additional Boost Logic ...
+    const boostBtn = document.getElementById('boostBtn');
+    const boostTimer = document.getElementById('boostTimer');
+        if (boostReady && !boostActive) {
+              boostBtn.disabled = false;
+              boostBtn.textContent = 'Activate Coffee Rush (Ready)';
+              boostTimer.textContent = 'Cooldown: 00:00';
+        } else if (boostActive) {
+              boostBtn.disabled = true;
+              boostBtn.textContent = 'Boost Active!';
+              boostTimer.textContent = 'Boost Active!';
+        } else {
+              boostBtn.disabled = true;
+              boostBtn.textContent = 'Coffee Rush (Cooldown)';
+              boostTimer.textContent = 'Cooldown: ' + formatTime(boostCooldownRemaining);
+    }
+  // ...
+}
 
     const togglePanel = document.getElementById('automation-toggles');
     togglePanel.style.display = automationUnlockCount > 0 ? 'block' : 'none';
@@ -581,4 +602,37 @@ document.addEventListener('DOMContentLoaded', () => {
     totalCoffeesBrewed += finalPassive;
     updateDisplay();
   }, 1000);
+
+  // Boost Button call
+  document.getElementById('boostBtn').onclick = () => {
+  if (!boostReady) return; // If on cooldown, do nothing
+  boostActive = true;
+  updateDisplay();
+  startBoostCooldown();
+
+  setTimeout(() => {
+    boostActive = false;
+    updateDisplay();
+  }, boostDuration);
+};
+  function startBoostCooldown() {
+  boostReady = false;
+  boostCooldownRemaining = boostCooldown;
+  updateDisplay();
+
+  if (boostTimerInterval) clearInterval(boostTimerInterval);
+  boostTimerInterval = setInterval(() => {
+    boostCooldownRemaining -= 1000;
+    if (boostCooldownRemaining <= 0) {
+      boostCooldownRemaining = 0;
+      boostReady = true;
+      clearInterval(boostTimerInterval);
+      updateDisplay();
+    } else {
+      updateDisplay();
+    }
+  }, 1000);
+}
+
+
 });
