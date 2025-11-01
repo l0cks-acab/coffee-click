@@ -1,4 +1,3 @@
-// combined_script_addons.js
 document.addEventListener('DOMContentLoaded', () => {
   // Game variables
   let coffees = 0;
@@ -33,15 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let cafePointMultiplier = 1;
 
   let boostActive = false;
-  const baseBoostCooldown = 300000;
+  const baseBoostCooldown = 300000; // 5 minutes
   let boostCooldown = baseBoostCooldown;
   let boostCooldownRemaining = 0;
   let boostReady = true;
-  const boostDuration = 30000;
-
+  const boostDuration = 30000; // 30 seconds boost
   let boostTimerInterval = null;
-
-
 
   let prodBoostCount = 0;
   let prodBoostCost = 1;
@@ -79,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     coldBrew: 6,
   };
 
-  // Quest system variables (merged)
+  // Quest variables and quests pool
   const QUEST_POOL = [
     { id: 'brew500', description: 'Brew 500 Coffees', type: 'brew', target: 500, reward: 5 },
     { id: 'brew1000', description: 'Brew 1000 Coffees', type: 'brew', target: 1000, reward: 10 },
@@ -94,140 +90,47 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   let activeQuests = [];
-  let completedQuests = [];
+  let completedQuests = {};
   let questDate = '';
 
-  // Get quests container
+  // Get quests container element
   const questsContainer = document.getElementById('quests-container');
 
-  // Utility to save everything
-  function saveGame() {
-    const data = {
-      coffees, totalCoffeesBrewed, coffeePerClick, upgradeLevel,
-      baristas, baristaCost, trucks, truckCost,
-      espressoMachines, espressoCost,
-      pourOverSetups, pourOverCost,
-      filterSetups, filterCost,
-      coldBrewSetups, coldBrewCost,
-      upgradeCost, cafePoints,
-      marketingLevel, marketingCost,
-      achievements,
-      prodBoostCount, prodBoostCost,
-      costReduceCount, costReduceCost,
-      automationUnlockCount, automationUnlockCost,
-      automationEnabled,
-      activeQuests,
-      completedQuests,
-      questDate,
-    };
-    try {
-      const str = btoa(encodeURIComponent(JSON.stringify(data)));
-      localStorage.setItem('cafeClickerSave', str);
-      alert('Game saved successfully.');
-    } catch (e) {
-      alert('Failed to save game.');
-      console.error(e);
-    }
-  }
-
-  // Load save from localStorage
-  function loadGame() {
-    try {
-      const str = localStorage.getItem('cafeClickerSave');
-      if (!str) {
-        alert('No save found.');
-        return;
-      }
-      const data = JSON.parse(decodeURIComponent(atob(str)));
-      // Assign data safely
-      Object.assign(
-        { coffees, totalCoffeesBrewed, coffeePerClick, upgradeLevel,
-          baristas, baristaCost, trucks, truckCost,
-          espressoMachines, espressoCost,
-          pourOverSetups, pourOverCost,
-          filterSetups, filterCost,
-          coldBrewSetups, coldBrewCost,
-          upgradeCost, cafePoints,
-          marketingLevel, marketingCost,
-          achievements,
-          prodBoostCount, prodBoostCost,
-          costReduceCount, costReduceCost,
-          automationUnlockCount, automationUnlockCost,
-          automationEnabled,
-          activeQuests,
-          completedQuests,
-          questDate }
-          , data
-      );
-
-      // assign back after Object.assign so variables update (workaround)
-      coffees = data.coffees ?? coffees;
-      totalCoffeesBrewed = data.totalCoffeesBrewed ?? totalCoffeesBrewed;
-      coffeePerClick = data.coffeePerClick ?? coffeePerClick;
-      upgradeLevel = data.upgradeLevel ?? upgradeLevel;
-      baristas = data.baristas ?? baristas;
-      baristaCost = data.baristaCost ?? baristaCost;
-      trucks = data.trucks ?? trucks;
-      truckCost = data.truckCost ?? truckCost;
-      espressoMachines = data.espressoMachines ?? espressoMachines;
-      espressoCost = data.espressoCost ?? espressoCost;
-      pourOverSetups = data.pourOverSetups ?? pourOverSetups;
-      pourOverCost = data.pourOverCost ?? pourOverCost;
-      filterSetups = data.filterSetups ?? filterSetups;
-      filterCost = data.filterCost ?? filterCost;
-      coldBrewSetups = data.coldBrewSetups ?? coldBrewSetups;
-      coldBrewCost = data.coldBrewCost ?? coldBrewCost;
-      upgradeCost = data.upgradeCost ?? upgradeCost;
-      cafePoints = data.cafePoints ?? cafePoints;
-      marketingLevel = data.marketingLevel ?? marketingLevel;
-      marketingCost = data.marketingCost ?? marketingCost;
-      achievements = data.achievements ?? achievements;
-      prodBoostCount = data.prodBoostCount ?? prodBoostCount;
-      prodBoostCost = data.prodBoostCost ?? prodBoostCost;
-      costReduceCount = data.costReduceCount ?? costReduceCount;
-      costReduceCost = data.costReduceCost ?? costReduceCost;
-      automationUnlockCount = data.automationUnlockCount ?? automationUnlockCount;
-      automationUnlockCost = data.automationUnlockCost ?? automationUnlockCost;
-      automationEnabled = data.automationEnabled ?? automationEnabled;
-      activeQuests = data.activeQuests ?? [];
-      completedQuests = data.completedQuests ?? [];
-      questDate = data.questDate ?? '';
-
-      cafePointMultiplier = 1 + cafePoints * 0.1;
-
-      updateDisplay();
-      renderQuests();
-      alert('Game loaded successfully.');
-    } catch (e) {
-      alert('Failed to load save.');
-      console.error(e);
-    }
-  }
-
-  // Calculate coffee per click with all multipliers
-  function calculateCoffeePerClick() {
-    return coffeePerClick * (1 + espressoMachines * 0.5) * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
-  }
-
-  // Calculate passive coffee per second
-  function calculatePassiveClick() {
-    let basePassive =
-      baristas * 1 +
-      trucks * 2 +
-      espressoMachines * brewingPassiveRates.espresso +
-      pourOverSetups * brewingPassiveRates.pourOver +
-      filterSetups * brewingPassiveRates.filter +
-      coldBrewSetups * brewingPassiveRates.coldBrew;
-    return basePassive * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
-  }
-
-  // Update UI text safely
+  // Helpers
   function safeSetText(id, text) {
     const e = document.getElementById(id);
     if (e) e.textContent = text;
   }
 
-  // Update all UI elements
+  function formatTime(ms) {
+    let totalSeconds = Math.ceil(ms / 1000);
+    let mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    let secs = (totalSeconds % 60).toString().padStart(2, '0');
+    return `${mins}:${secs}`;
+  }
+
+  function getReducedCost(baseCost) {
+    const reduction = 0.02 * costReduceCount;
+    return Math.ceil(baseCost * Math.max(0.5, 1 - reduction));
+  }
+
+  // Core calculations
+  function calculateCoffeePerClick() {
+    return coffeePerClick * (1 + espressoMachines * 0.5) * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
+  }
+
+  function calculatePassiveClick() {
+    let basePassive =
+      baristas * 1 + trucks * 2 +
+      espressoMachines * brewingPassiveRates.espresso +
+      pourOverSetups * brewingPassiveRates.pourOver +
+      filterSetups * brewingPassiveRates.filter +
+      coldBrewSetups * brewingPassiveRates.coldBrew;
+
+    return basePassive * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
+  }
+
+  // UI update
   function updateDisplay() {
     safeSetText('coffees', Math.floor(coffees));
     safeSetText('coffeePerClick', calculateCoffeePerClick().toFixed(1));
@@ -266,25 +169,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('buyProdBoostBtn').disabled = cafePoints < prodBoostCost;
     document.getElementById('buyCostReduceBtn').disabled = cafePoints < costReduceCost;
     document.getElementById('buyAutomationUnlockBtn').disabled = cafePoints < automationUnlockCost || automationUnlockCount > 0;
-    
-    // Additional Boost Logic ...
-    const boostBtn = document.getElementById('boostBtn');
-    const boostTimer = document.getElementById('boostTimer');
-        if (boostReady && !boostActive) {
-              boostBtn.disabled = false;
-              boostBtn.textContent = 'Activate Coffee Rush (Ready)';
-              boostTimer.textContent = 'Cooldown: 00:00';
-        } else if (boostActive) {
-              boostBtn.disabled = true;
-              boostBtn.textContent = 'Boost Active!';
-              boostTimer.textContent = 'Boost Active!';
-        } else {
-              boostBtn.disabled = true;
-              boostBtn.textContent = 'Coffee Rush (Cooldown)';
-              boostTimer.textContent = 'Cooldown: ' + formatTime(boostCooldownRemaining);
-    }
-  // ...
-}
 
     const togglePanel = document.getElementById('automation-toggles');
     togglePanel.style.display = automationUnlockCount > 0 ? 'block' : 'none';
@@ -294,17 +178,25 @@ document.addEventListener('DOMContentLoaded', () => {
       if (checkbox) checkbox.checked = automationEnabled[key];
     }
 
-    // Update achievements...
-
-    // Enable/Disable buttons depending on resources
+    // Boost button update
+    const boostBtn = document.getElementById('boostBtn');
+    const boostTimer = document.getElementById('boostTimer');
+    if (boostReady && !boostActive) {
+      boostBtn.disabled = false;
+      boostBtn.textContent = 'Activate Coffee Rush (Ready)';
+      boostTimer.textContent = 'Cooldown: 00:00';
+    } else if (boostActive) {
+      boostBtn.disabled = true;
+      boostBtn.textContent = 'Boost Active!';
+      boostTimer.textContent = 'Boost Active!';
+    } else {
+      boostBtn.disabled = true;
+      boostBtn.textContent = 'Coffee Rush (Cooldown)';
+      boostTimer.textContent = 'Cooldown: ' + formatTime(boostCooldownRemaining);
+    }
   }
 
-  function getReducedCost(baseCost) {
-    const reduction = 0.02 * costReduceCount;
-    return Math.ceil(baseCost * Math.max(0.5, 1 - reduction));
-  }
-
-  // Emoji explosion effect
+  // Coffee explosion effect
   function createEmojiExplosion(x, y) {
     const numParticles = 20;
     const emoji = '☕';
@@ -324,15 +216,12 @@ document.addEventListener('DOMContentLoaded', () => {
       particle.style.top = `${y}px`;
       particle.style.setProperty('--dx', dx);
       particle.style.setProperty('--dy', dy);
-
       particle.style.animationDelay = `${i * 20}ms`;
-
       particle.addEventListener('animationend', () => particle.remove());
     }
   }
 
-  // Game actions:
-  // Wrapper for brewing coffee: integrates quest and UI update hooks
+  // Brewing coffee click wrapper to hook quests and update UI
   window.brewCoffeeClick = (amount) => {
     coffees += amount;
     totalCoffeesBrewed += amount;
@@ -342,14 +231,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.updateQuestProgress) window.updateQuestProgress('brew', amount);
   };
 
-  // Hook brew button
+  // Event handlers
   document.getElementById('coffee-btn').onclick = (e) => {
     createEmojiExplosion(e.clientX, e.clientY);
     const earned = calculateCoffeePerClick();
     window.brewCoffeeClick(earned);
   };
 
-  // Purchase handlers with quest updates
   document.getElementById('buyBaristaBtn').onclick = () => {
     const cost = getReducedCost(baristaCost);
     if (coffees >= cost) {
@@ -362,12 +250,60 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Similar purchase handlers for trucks, espresso, pour over, filter, cold brew ...
+  // Similarly implement buyTruckBtn, buyEspressoMachineBtn, buyPourOverBtn, buyFilterBtn, buyColdBrewBtn with quest updates...
 
-  // Automation toggles and interval for auto buying similar as before...
+  // Coffee Rush boost button
+  document.getElementById('boostBtn').onclick = () => {
+    if (!boostReady) return;
+    boostActive = true;
+    updateDisplay();
+    startBoostCooldown();
+    setTimeout(() => {
+      boostActive = false;
+      updateDisplay();
+    }, boostDuration);
+  };
 
-  // Save and load integration
+  function startBoostCooldown() {
+    boostReady = false;
+    boostCooldownRemaining = boostCooldown;
+    updateDisplay();
+    if (boostTimerInterval) clearInterval(boostTimerInterval);
+    boostTimerInterval = setInterval(() => {
+      boostCooldownRemaining -= 1000;
+      if (boostCooldownRemaining <= 0) {
+        boostCooldownRemaining = 0;
+        boostReady = true;
+        clearInterval(boostTimerInterval);
+      }
+      updateDisplay();
+    }, 1000);
+  }
 
+  // Automation toggles and auto-buy interval
+  ['Barista','Truck','Espresso','PourOver','Filter','ColdBrew'].forEach(key => {
+    let el = document.getElementById('auto' + key);
+    if (el) el.addEventListener('change', () => automationEnabled[key.toLowerCase()] = el.checked);
+  });
+
+  setInterval(() => {
+    if (automationUnlockCount < 1) return;
+    if (automationEnabled.baristas) tryBuy('buyBaristaBtn', baristaCost);
+    if (automationEnabled.trucks) tryBuy('buyTruckBtn', truckCost);
+    if (automationEnabled.espresso) tryBuy('buyEspressoMachineBtn', espressoCost);
+    if (automationEnabled.pourOver) tryBuy('buyPourOverBtn', pourOverCost);
+    if (automationEnabled.filter) tryBuy('buyFilterBtn', filterCost);
+    if (automationEnabled.coldBrew) tryBuy('buyColdBrewBtn', coldBrewCost);
+  }, 1000);
+
+  function tryBuy(buttonId, baseCost) {
+    const cost = getReducedCost(baseCost);
+    const btn = document.getElementById(buttonId);
+    if (!btn || btn.disabled || coffees < cost) return;
+    btn.click();
+  }
+
+  // Save and load including quests
   function exportSave() {
     const saveData = {
       coffees, totalCoffeesBrewed, coffeePerClick, upgradeLevel,
@@ -386,10 +322,13 @@ document.addEventListener('DOMContentLoaded', () => {
       activeQuests,
       completedQuests,
       questDate,
+      boostActive,
+      boostCooldown,
+      boostCooldownRemaining,
+      boostReady
     };
     try {
-      const str = btoa(encodeURIComponent(JSON.stringify(saveData)));
-      return str;
+      return btoa(encodeURIComponent(JSON.stringify(saveData)));
     } catch {
       alert("Failed to export save.");
       return "";
@@ -399,49 +338,68 @@ document.addEventListener('DOMContentLoaded', () => {
   function importSave(encodedStr) {
     try {
       const data = JSON.parse(decodeURIComponent(atob(encodedStr)));
-      Object.assign(window, data);
+
       coffees = data.coffees || 0;
       totalCoffeesBrewed = data.totalCoffeesBrewed || 0;
       coffeePerClick = data.coffeePerClick || 1;
       upgradeLevel = data.upgradeLevel || 1;
+
       baristas = data.baristas || 0;
       baristaCost = data.baristaCost || 50;
       trucks = data.trucks || 0;
       truckCost = data.truckCost || 500;
+
       espressoMachines = data.espressoMachines || 0;
       espressoCost = data.espressoCost || 1000;
       pourOverSetups = data.pourOverSetups || 0;
       pourOverCost = data.pourOverCost || 2000;
+
       filterSetups = data.filterSetups || 0;
       filterCost = data.filterCost || 3500;
       coldBrewSetups = data.coldBrewSetups || 0;
       coldBrewCost = data.coldBrewCost || 5000;
+
       upgradeCost = data.upgradeCost || 100;
       cafePoints = data.cafePoints || 0;
       marketingLevel = data.marketingLevel || 0;
       marketingCost = data.marketingCost || 500;
       achievements = data.achievements || {};
+
       prodBoostCount = data.prodBoostCount || 0;
       prodBoostCost = data.prodBoostCost || 1;
       costReduceCount = data.costReduceCount || 0;
       costReduceCost = data.costReduceCost || 1;
+
       automationUnlockCount = data.automationUnlockCount || 0;
       automationUnlockCost = data.automationUnlockCost || 3;
-      automationEnabled = data.automationEnabled || automationEnabled;
+      automationEnabled = data.automationEnabled || {
+        baristas: false,
+        trucks: false,
+        espresso: false,
+        pourOver: false,
+        filter: false,
+        coldBrew: false,
+      };
+
       activeQuests = data.activeQuests || [];
-      completedQuests = data.completedQuests || [];
-      questDate = data.questDate || "";
+      completedQuests = data.completedQuests || {};
+      questDate = data.questDate || '';
+
+      boostActive = data.boostActive || false;
+      boostCooldown = data.boostCooldown || baseBoostCooldown;
+      boostCooldownRemaining = data.boostCooldownRemaining || 0;
+      boostReady = (typeof data.boostReady === "boolean") ? data.boostReady : true;
+
       cafePointMultiplier = 1 + cafePoints * 0.1;
 
       updateDisplay();
       renderQuests();
-      alert('Game loaded successfully!');
+      alert("Save loaded successfully!");
     } catch {
-      alert('Failed to import save data.');
+      alert("Failed to import save data.");
     }
   }
 
-  // Export/import buttons handlers
   document.getElementById('exportBtn').onclick = () => {
     const saveStr = exportSave();
     const textarea = document.getElementById('importExportArea');
@@ -449,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
       textarea.value = saveStr;
       textarea.select();
       document.execCommand('copy');
-      alert('Save exported and copied to clipboard.');
+      alert("Save exported and copied to clipboard.");
     }
   };
 
@@ -458,55 +416,65 @@ document.addEventListener('DOMContentLoaded', () => {
     if (val.length > 0) {
       importSave(val);
     } else {
-      alert('Please paste save data into the text box to import.');
+      alert("Please paste save data into the text box to import.");
     }
   };
 
-  // Quest functions (imported from addon merged here)
-
-  // Initialize quests with daily reset
+  // Quest functions
   function initializeDailyQuests() {
     const today = new Date().toISOString().split('T')[0];
     if (questDate !== today || activeQuests.length === 0) {
       completedQuests = {};
       const shuffled = QUEST_POOL.sort(() => 0.5 - Math.random());
-      activeQuests = shuffled.slice(0,5).map(q => ({ ...q, progress: 0, accepted: false, claimed: false }));
+      activeQuests = shuffled.slice(0, 5).map(q => ({ ...q, progress: 0, accepted: false, claimed: false }));
       questDate = today;
     }
     renderQuests();
   }
 
-  // Save quests in main save via global variables
-  function saveQuestsData() {
-    // called implicitly in saveGame or exportSave
-  }
-
-  // Update quest progress on relevant actions
-  window.updateQuestProgress = (type, amount) => {
+  function updateQuestProgress(type, amount) {
     let updated = false;
     activeQuests.forEach(q => {
       if (q.accepted && !q.claimed) {
-        switch(q.type) {
-          case 'prestige':
-            if (type === 'prestige' && amount >= q.target) { q.progress = q.target; updated = true; }
+        switch (q.type) {
+          case "prestige":
+            if (type === "prestige" && amount >= q.target) {
+              q.progress = q.target;
+              updated = true;
+            }
             break;
-          case 'hire':
-            if (type === 'hire') { q.progress = Math.min(q.progress + amount, q.target); updated = true; }
+          case "hire":
+            if (type === "hire") {
+              q.progress = Math.min(q.progress + amount, q.target);
+              updated = true;
+            }
             break;
-          case 'brew':
-            if (type === 'brew') { q.progress = Math.min(q.progress + amount, q.target); updated = true; }
+          case "brew":
+            if (type === "brew") {
+              q.progress = Math.min(q.progress + amount, q.target);
+              updated = true;
+            }
             break;
-          case 'buyTrucks':
-            if (type === 'buyTrucks') { q.progress = Math.min(q.progress + amount, q.target); updated = true; }
+          case "buyTrucks":
+            if (type === "buyTrucks") {
+              q.progress = Math.min(q.progress + amount, q.target);
+              updated = true;
+            }
             break;
-          case 'buyEspresso':
-            if (type === 'buyEspresso') { q.progress = Math.min(q.progress + amount, q.target); updated = true; }
+          case "buyEspresso":
+            if (type === "buyEspresso") {
+              q.progress = Math.min(q.progress + amount, q.target);
+              updated = true;
+            }
             break;
-          case 'upgradeLevel':
-            if (type === 'upgradeLevel' && amount >= q.target) { q.progress = q.target; updated = true; }
+          case "upgradeLevel":
+            if (type === "upgradeLevel" && amount >= q.target) {
+              q.progress = q.target;
+              updated = true;
+            }
             break;
-          case 'buyAllBrewing':
-            if (type === 'buyAllBrewing') {
+          case "buyAllBrewing":
+            if (type === "buyAllBrewing") {
               const haveAll = espressoMachines > 0 && pourOverSetups > 0 && filterSetups > 0 && coldBrewSetups > 0;
               if (haveAll) {
                 q.progress = q.target;
@@ -520,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (updated) {
       renderQuests();
     }
-  };
+  }
 
   function acceptQuest(id) {
     const quest = activeQuests.find(q => q.id === id);
@@ -536,14 +504,13 @@ document.addEventListener('DOMContentLoaded', () => {
       quest.claimed = true;
       completedQuests[quest.id] = true;
       cafePoints += quest.reward;
-      if (typeof updateDisplay === 'function') updateDisplay();
+      updateDisplay();
       renderQuests();
       alert(`Quest "${quest.description}" completed! You earned ${quest.reward} Cafe Points.`);
     }
   }
 
   function renderQuests() {
-    const questsContainer = document.getElementById('quests-container');
     if (!questsContainer) return;
     questsContainer.innerHTML = '';
     activeQuests.forEach(quest => {
@@ -555,13 +522,16 @@ document.addEventListener('DOMContentLoaded', () => {
       questDiv.style.padding = '8px';
       questDiv.style.borderRadius = '8px';
       questDiv.style.backgroundColor = quest.accepted ? 'var(--surface0)' : 'var(--surface1)';
+
       const desc = document.createElement('div');
       desc.textContent = quest.description;
       desc.style.fontWeight = '600';
       questDiv.appendChild(desc);
+
       const prog = document.createElement('div');
       prog.textContent = `Progress: ${quest.progress} / ${quest.target}`;
       questDiv.appendChild(prog);
+
       if (!quest.accepted) {
         const acceptBtn = document.createElement('button');
         acceptBtn.textContent = 'Accept Quest';
@@ -584,55 +554,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Initialize quests and update display on start
+  // Initialize quest system and updating UI
   initializeDailyQuests();
-  updateDisplay();
 
-  // Passive coffee generation loop
+  // Passive coffee per second generation
   setInterval(() => {
-    const passive =
+    let passive =
       baristas * 1 +
       trucks * 2 +
       espressoMachines * brewingPassiveRates.espresso +
       pourOverSetups * brewingPassiveRates.pourOver +
       filterSetups * brewingPassiveRates.filter +
       coldBrewSetups * brewingPassiveRates.coldBrew;
-    const finalPassive = passive * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
+
+    let finalPassive = passive * cafePointMultiplier * (boostActive ? 2 : 1) * (1 + 0.01 * prodBoostCount);
     coffees += finalPassive;
     totalCoffeesBrewed += finalPassive;
     updateDisplay();
   }, 1000);
 
-  // Boost Button call
-  document.getElementById('boostBtn').onclick = () => {
-  if (!boostReady) return; // If on cooldown, do nothing
-  boostActive = true;
+  // Initial display update
   updateDisplay();
-  startBoostCooldown();
-
-  setTimeout(() => {
-    boostActive = false;
-    updateDisplay();
-  }, boostDuration);
-};
-  function startBoostCooldown() {
-  boostReady = false;
-  boostCooldownRemaining = boostCooldown;
-  updateDisplay();
-
-  if (boostTimerInterval) clearInterval(boostTimerInterval);
-  boostTimerInterval = setInterval(() => {
-    boostCooldownRemaining -= 1000;
-    if (boostCooldownRemaining <= 0) {
-      boostCooldownRemaining = 0;
-      boostReady = true;
-      clearInterval(boostTimerInterval);
-      updateDisplay();
-    } else {
-      updateDisplay();
-    }
-  }, 1000);
-}
-
-
 });
